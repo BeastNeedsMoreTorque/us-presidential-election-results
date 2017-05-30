@@ -1,0 +1,478 @@
+,candidate,county,votes
+0,Donald J. Trump,Appling,5494
+1,Hillary Clinton,Appling,1434
+2,Other,Appling,77
+3,Donald J. Trump,Atkinson,1878
+4,Hillary Clinton,Atkinson,697
+5,Other,Atkinson,35
+6,Donald J. Trump,Bacon,3364
+7,Hillary Clinton,Bacon,608
+8,Other,Bacon,47
+9,Donald J. Trump,Baker,775
+10,Hillary Clinton,Baker,650
+11,Other,Baker,15
+12,Donald J. Trump,Baldwin,7697
+13,Hillary Clinton,Baldwin,7970
+14,Other,Baldwin,419
+15,Donald J. Trump,Banks,6134
+16,Hillary Clinton,Banks,684
+17,Other,Banks,132
+18,Donald J. Trump,Barrow,21108
+19,Hillary Clinton,Barrow,6580
+20,Other,Barrow,1143
+21,Donald J. Trump,Bartow,29911
+22,Hillary Clinton,Bartow,8212
+23,Other,Bartow,1183
+24,Donald J. Trump,Ben Hill,3739
+25,Hillary Clinton,Ben Hill,2101
+26,Other,Ben Hill,91
+27,Donald J. Trump,Berrien,5422
+28,Hillary Clinton,Berrien,1047
+29,Other,Berrien,115
+30,Donald J. Trump,Bibb,24043
+31,Hillary Clinton,Bibb,36787
+32,Other,Bibb,1447
+33,Donald J. Trump,Bleckley,3719
+34,Hillary Clinton,Bleckley,1101
+35,Other,Bleckley,123
+36,Donald J. Trump,Brantley,5567
+37,Hillary Clinton,Brantley,619
+38,Other,Brantley,106
+39,Donald J. Trump,Brooks,3701
+40,Hillary Clinton,Brooks,2528
+41,Other,Brooks,89
+42,Donald J. Trump,Bryan,10529
+43,Hillary Clinton,Bryan,4014
+44,Other,Bryan,542
+45,Donald J. Trump,Bulloch,15097
+46,Hillary Clinton,Bulloch,9261
+47,Other,Bulloch,890
+48,Donald J. Trump,Burke,4491
+49,Hillary Clinton,Burke,4731
+50,Other,Burke,129
+51,Donald J. Trump,Butts,6717
+52,Hillary Clinton,Butts,2566
+53,Other,Butts,194
+54,Donald J. Trump,Calhoun,830
+55,Hillary Clinton,Calhoun,1179
+56,Other,Calhoun,16
+57,Donald J. Trump,Camden,12310
+58,Hillary Clinton,Camden,5930
+59,Other,Camden,629
+60,Donald J. Trump,Candler,2664
+61,Hillary Clinton,Candler,1026
+62,Other,Candler,73
+63,Donald J. Trump,Carroll,30029
+64,Hillary Clinton,Carroll,12464
+65,Other,Carroll,1346
+66,Donald J. Trump,Catoosa,20876
+67,Hillary Clinton,Catoosa,4771
+68,Other,Catoosa,881
+69,Donald J. Trump,Charlton,2951
+70,Hillary Clinton,Charlton,1004
+71,Other,Charlton,54
+72,Donald J. Trump,Chatham,45688
+73,Hillary Clinton,Chatham,62290
+74,Other,Chatham,3503
+75,Donald J. Trump,Chattahoochee,751
+76,Hillary Clinton,Chattahoochee,594
+77,Other,Chattahoochee,45
+78,Donald J. Trump,Chattooga,6462
+79,Hillary Clinton,Chattooga,1613
+80,Other,Chattooga,177
+81,Donald J. Trump,Cherokee,80649
+82,Hillary Clinton,Cherokee,25231
+83,Other,Cherokee,5015
+84,Donald J. Trump,Clarke,12717
+85,Hillary Clinton,Clarke,29603
+86,Other,Clarke,2019
+87,Donald J. Trump,Clay,566
+88,Hillary Clinton,Clay,697
+89,Other,Clay,8
+90,Donald J. Trump,Clayton,12645
+91,Hillary Clinton,Clayton,78220
+92,Other,Clayton,1647
+93,Donald J. Trump,Clinch,1727
+94,Hillary Clinton,Clinch,686
+95,Other,Clinch,34
+96,Donald J. Trump,Cobb,152912
+97,Hillary Clinton,Cobb,160121
+98,Other,Cobb,14466
+99,Donald J. Trump,Coffee,9588
+100,Hillary Clinton,Coffee,4094
+101,Other,Coffee,233
+102,Donald J. Trump,Colquitt,9898
+103,Hillary Clinton,Colquitt,3463
+104,Other,Colquitt,240
+105,Donald J. Trump,Columbia,43085
+106,Hillary Clinton,Columbia,18887
+107,Other,Columbia,2270
+108,Donald J. Trump,Cook,4176
+109,Hillary Clinton,Cook,1753
+110,Other,Cook,112
+111,Donald J. Trump,Coweta,42533
+112,Hillary Clinton,Coweta,16583
+113,Other,Coweta,2235
+114,Donald J. Trump,Crawford,3635
+115,Hillary Clinton,Crawford,1421
+116,Other,Crawford,106
+117,Donald J. Trump,Crisp,4549
+118,Hillary Clinton,Crisp,2837
+119,Other,Crisp,126
+120,Donald J. Trump,Dade,5051
+121,Hillary Clinton,Dade,965
+122,Other,Dade,226
+123,Donald J. Trump,Dawson,9900
+124,Hillary Clinton,Dawson,1448
+125,Other,Dawson,356
+126,Donald J. Trump,Decatur,6020
+127,Hillary Clinton,Decatur,4124
+128,Other,Decatur,126
+129,Donald J. Trump,DeKalb,51468
+130,Hillary Clinton,DeKalb,251370
+131,Other,DeKalb,9666
+132,Donald J. Trump,Dodge,5021
+133,Hillary Clinton,Dodge,1839
+134,Other,Dodge,138
+135,Donald J. Trump,Dooly,1951
+136,Hillary Clinton,Dooly,1872
+137,Other,Dooly,36
+138,Donald J. Trump,Dougherty,10232
+139,Hillary Clinton,Dougherty,23311
+140,Other,Dougherty,475
+141,Donald J. Trump,Douglas,24817
+142,Hillary Clinton,Douglas,31005
+143,Other,Douglas,1594
+144,Donald J. Trump,Early,2552
+145,Hillary Clinton,Early,2168
+146,Other,Early,65
+147,Donald J. Trump,Echols,1007
+148,Hillary Clinton,Echols,156
+149,Other,Echols,13
+150,Donald J. Trump,Effingham,17874
+151,Hillary Clinton,Effingham,4853
+152,Other,Effingham,679
+153,Donald J. Trump,Elbert,5292
+154,Hillary Clinton,Elbert,2539
+155,Other,Elbert,139
+156,Donald J. Trump,Emanuel,5335
+157,Hillary Clinton,Emanuel,2435
+158,Other,Emanuel,75
+159,Donald J. Trump,Evans,2404
+160,Hillary Clinton,Evans,1130
+161,Other,Evans,68
+162,Donald J. Trump,Fannin,9632
+163,Hillary Clinton,Fannin,1923
+164,Other,Fannin,222
+165,Donald J. Trump,Fayette,35048
+166,Hillary Clinton,Fayette,23284
+167,Other,Fayette,2103
+168,Donald J. Trump,Floyd,24114
+169,Hillary Clinton,Floyd,9159
+170,Other,Floyd,1084
+171,Donald J. Trump,Forsyth,69851
+172,Hillary Clinton,Forsyth,23462
+173,Other,Forsyth,4091
+174,Donald J. Trump,Franklin,7054
+175,Hillary Clinton,Franklin,1243
+176,Other,Franklin,177
+177,Donald J. Trump,Fulton,117783
+178,Hillary Clinton,Fulton,297051
+179,Other,Fulton,15765
+180,Donald J. Trump,Gilmer,10477
+181,Hillary Clinton,Gilmer,1965
+182,Other,Gilmer,293
+183,Donald J. Trump,Glascock,1235
+184,Hillary Clinton,Glascock,138
+185,Other,Glascock,17
+186,Donald J. Trump,Glynn,21512
+187,Hillary Clinton,Glynn,11775
+188,Other,Glynn,825
+189,Donald J. Trump,Gordon,15191
+190,Hillary Clinton,Gordon,3181
+191,Other,Gordon,507
+192,Donald J. Trump,Grady,6053
+193,Hillary Clinton,Grady,3013
+194,Other,Grady,135
+195,Donald J. Trump,Greene,5490
+196,Hillary Clinton,Greene,3199
+197,Other,Greene,151
+198,Donald J. Trump,Gwinnett,146989
+199,Hillary Clinton,Gwinnett,166153
+200,Other,Gwinnett,12494
+201,Donald J. Trump,Habersham,13190
+202,Hillary Clinton,Habersham,2483
+203,Other,Habersham,461
+204,Donald J. Trump,Hall,51733
+205,Hillary Clinton,Hall,16180
+206,Other,Hall,2307
+207,Donald J. Trump,Hancock,843
+208,Hillary Clinton,Hancock,2701
+209,Other,Hancock,36
+210,Donald J. Trump,Haralson,9585
+211,Hillary Clinton,Haralson,1475
+212,Other,Haralson,264
+213,Donald J. Trump,Harris,11936
+214,Hillary Clinton,Harris,4086
+215,Other,Harris,379
+216,Donald J. Trump,Hart,7286
+217,Hillary Clinton,Hart,2585
+218,Other,Hart,209
+219,Donald J. Trump,Heard,3370
+220,Hillary Clinton,Heard,743
+221,Other,Heard,93
+222,Donald J. Trump,Henry,45724
+223,Hillary Clinton,Henry,50057
+224,Other,Henry,2505
+225,Donald J. Trump,Houston,35430
+226,Hillary Clinton,Houston,22553
+227,Other,Houston,1761
+228,Donald J. Trump,Irwin,2716
+229,Hillary Clinton,Irwin,891
+230,Other,Irwin,58
+231,Donald J. Trump,Jackson,21784
+232,Hillary Clinton,Jackson,4491
+233,Other,Jackson,834
+234,Donald J. Trump,Jasper,4360
+235,Hillary Clinton,Jasper,1544
+236,Other,Jasper,119
+237,Donald J. Trump,Jeff Davis,4104
+238,Hillary Clinton,Jeff Davis,901
+239,Other,Jeff Davis,86
+240,Donald J. Trump,Jefferson,3063
+241,Hillary Clinton,Jefferson,3821
+242,Other,Jefferson,70
+243,Donald J. Trump,Jenkins,1895
+244,Hillary Clinton,Jenkins,1123
+245,Other,Jenkins,34
+246,Donald J. Trump,Johnson,2519
+247,Hillary Clinton,Johnson,1136
+248,Other,Johnson,27
+249,Donald J. Trump,Jones,8305
+250,Hillary Clinton,Jones,3961
+251,Other,Jones,260
+252,Donald J. Trump,Lamar,5190
+253,Hillary Clinton,Lamar,2270
+254,Other,Lamar,126
+255,Donald J. Trump,Lanier,1984
+256,Hillary Clinton,Lanier,806
+257,Other,Lanier,73
+258,Donald J. Trump,Laurens,12411
+259,Hillary Clinton,Laurens,6752
+260,Other,Laurens,313
+261,Donald J. Trump,Lee,10646
+262,Hillary Clinton,Lee,3170
+263,Other,Lee,299
+264,Donald J. Trump,Liberty,6134
+265,Hillary Clinton,Liberty,9556
+266,Other,Liberty,427
+267,Donald J. Trump,Lincoln,2759
+268,Hillary Clinton,Lincoln,1273
+269,Other,Lincoln,70
+270,Donald J. Trump,Long,2626
+271,Hillary Clinton,Long,1360
+272,Other,Long,131
+273,Donald J. Trump,Lowndes,21635
+274,Hillary Clinton,Lowndes,15064
+275,Other,Lowndes,929
+276,Donald J. Trump,Lumpkin,9619
+277,Hillary Clinton,Lumpkin,2220
+278,Other,Lumpkin,495
+279,Donald J. Trump,Macon,1540
+280,Hillary Clinton,Macon,2705
+281,Other,Macon,42
+282,Donald J. Trump,Madison,9201
+283,Hillary Clinton,Madison,2425
+284,Other,Madison,328
+285,Donald J. Trump,Marion,1921
+286,Hillary Clinton,Marion,1213
+287,Other,Marion,49
+288,Donald J. Trump,McDuffie,5432
+289,Hillary Clinton,McDuffie,3699
+290,Other,McDuffie,137
+291,Donald J. Trump,McIntosh,3487
+292,Hillary Clinton,McIntosh,2303
+293,Other,McIntosh,113
+294,Donald J. Trump,Meriwether,5222
+295,Hillary Clinton,Meriwether,3804
+296,Other,Meriwether,165
+297,Donald J. Trump,Miller,1891
+298,Hillary Clinton,Miller,623
+299,Other,Miller,30
+300,Donald J. Trump,Mitchell,4279
+301,Hillary Clinton,Mitchell,3493
+302,Other,Mitchell,93
+303,Donald J. Trump,Monroe,8832
+304,Hillary Clinton,Monroe,3571
+305,Other,Monroe,284
+306,Donald J. Trump,Montgomery,2670
+307,Hillary Clinton,Montgomery,847
+308,Other,Montgomery,45
+309,Donald J. Trump,Morgan,6559
+310,Hillary Clinton,Morgan,2663
+311,Other,Morgan,218
+312,Donald J. Trump,Murray,10341
+313,Hillary Clinton,Murray,1800
+314,Other,Murray,283
+315,Donald J. Trump,Muscogee,26976
+316,Hillary Clinton,Muscogee,39851
+317,Other,Muscogee,1831
+318,Donald J. Trump,Newton,20913
+319,Hillary Clinton,Newton,21943
+320,Other,Newton,947
+321,Donald J. Trump,Oconee,13425
+322,Hillary Clinton,Oconee,5581
+323,Other,Oconee,925
+324,Donald J. Trump,Oglethorpe,4625
+325,Hillary Clinton,Oglethorpe,1831
+326,Other,Oglethorpe,199
+327,Donald J. Trump,Paulding,44662
+328,Hillary Clinton,Paulding,18025
+329,Other,Paulding,1954
+330,Donald J. Trump,Peach,5413
+331,Hillary Clinton,Peach,5100
+332,Other,Peach,211
+333,Donald J. Trump,Pickens,11651
+334,Hillary Clinton,Pickens,1979
+335,Other,Pickens,354
+336,Donald J. Trump,Pierce,6302
+337,Hillary Clinton,Pierce,903
+338,Other,Pierce,93
+339,Donald J. Trump,Pike,7278
+340,Hillary Clinton,Pike,1240
+341,Other,Pike,163
+342,Donald J. Trump,Polk,11014
+343,Hillary Clinton,Polk,2867
+344,Other,Polk,289
+345,Donald J. Trump,Pulaski,2437
+346,Hillary Clinton,Pulaski,1104
+347,Other,Pulaski,58
+348,Donald J. Trump,Putnam,6544
+349,Hillary Clinton,Putnam,2758
+350,Other,Putnam,170
+351,Donald J. Trump,Quitman,575
+352,Hillary Clinton,Quitman,461
+353,Other,Quitman,8
+354,Donald J. Trump,Rabun,6287
+355,Hillary Clinton,Rabun,1444
+356,Other,Rabun,219
+357,Donald J. Trump,Randolph,1271
+358,Hillary Clinton,Randolph,1598
+359,Other,Randolph,28
+360,Donald J. Trump,Richmond,24461
+361,Hillary Clinton,Richmond,48814
+362,Other,Richmond,1811
+363,Donald J. Trump,Rockdale,13478
+364,Hillary Clinton,Rockdale,23255
+365,Other,Rockdale,923
+366,Donald J. Trump,Schley,1472
+367,Hillary Clinton,Schley,401
+368,Other,Schley,36
+369,Donald J. Trump,Screven,3305
+370,Hillary Clinton,Screven,2300
+371,Other,Screven,94
+372,Donald J. Trump,Seminole,2345
+373,Hillary Clinton,Seminole,1189
+374,Other,Seminole,48
+375,Donald J. Trump,Spalding,15646
+376,Hillary Clinton,Spalding,9357
+377,Other,Spalding,597
+378,Donald J. Trump,Stephens,7686
+379,Hillary Clinton,Stephens,1837
+380,Other,Stephens,243
+381,Donald J. Trump,Stewart,805
+382,Hillary Clinton,Stewart,1222
+383,Other,Stewart,28
+384,Donald J. Trump,Sumter,5276
+385,Hillary Clinton,Sumter,5520
+386,Other,Sumter,178
+387,Donald J. Trump,Talbot,1196
+388,Hillary Clinton,Talbot,2002
+389,Other,Talbot,46
+390,Donald J. Trump,Taliaferro,349
+391,Hillary Clinton,Taliaferro,545
+392,Other,Taliaferro,3
+393,Donald J. Trump,Tattnall,5096
+394,Hillary Clinton,Tattnall,1681
+395,Other,Tattnall,109
+396,Donald J. Trump,Taylor,2064
+397,Hillary Clinton,Taylor,1296
+398,Other,Taylor,45
+399,Donald J. Trump,Telfair,2450
+400,Hillary Clinton,Telfair,1313
+401,Other,Telfair,32
+402,Donald J. Trump,Terrell,1874
+403,Hillary Clinton,Terrell,2267
+404,Other,Terrell,40
+405,Donald J. Trump,Thomas,11228
+406,Hillary Clinton,Thomas,7142
+407,Other,Thomas,368
+408,Donald J. Trump,Tift,9584
+409,Hillary Clinton,Tift,4347
+410,Other,Tift,244
+411,Donald J. Trump,Toombs,6615
+412,Hillary Clinton,Toombs,2338
+413,Other,Toombs,158
+414,Donald J. Trump,Towns,5383
+415,Hillary Clinton,Towns,1210
+416,Other,Towns,146
+417,Donald J. Trump,Treutlen,1809
+418,Hillary Clinton,Treutlen,862
+419,Other,Treutlen,32
+420,Donald J. Trump,Troup,15750
+421,Hillary Clinton,Troup,9713
+422,Other,Troup,561
+423,Donald J. Trump,Turner,2095
+424,Hillary Clinton,Turner,1246
+425,Other,Turner,53
+426,Donald J. Trump,Twiggs,2035
+427,Hillary Clinton,Twiggs,1971
+428,Other,Twiggs,50
+429,Donald J. Trump,Union,9852
+430,Hillary Clinton,Union,1963
+431,Other,Union,229
+432,Donald J. Trump,Upson,7292
+433,Hillary Clinton,Upson,3475
+434,Other,Upson,167
+435,Donald J. Trump,Walker,18950
+436,Hillary Clinton,Walker,4215
+437,Other,Walker,791
+438,Donald J. Trump,Walton,31125
+439,Hillary Clinton,Walton,8292
+440,Other,Walton,1055
+441,Donald J. Trump,Ware,8513
+442,Hillary Clinton,Ware,3440
+443,Other,Ware,206
+444,Donald J. Trump,Warren,991
+445,Hillary Clinton,Warren,1314
+446,Other,Warren,28
+447,Donald J. Trump,Washington,4149
+448,Hillary Clinton,Washington,4200
+449,Other,Washington,98
+450,Donald J. Trump,Wayne,8153
+451,Hillary Clinton,Wayne,2041
+452,Other,Wayne,192
+453,Donald J. Trump,Webster,630
+454,Hillary Clinton,Webster,473
+455,Other,Webster,13
+456,Donald J. Trump,Wheeler,1421
+457,Hillary Clinton,Wheeler,646
+458,Other,Wheeler,35
+459,Donald J. Trump,White,9761
+460,Hillary Clinton,White,1674
+461,Other,White,348
+462,Donald J. Trump,Whitfield,21537
+463,Hillary Clinton,Whitfield,7937
+464,Other,Whitfield,924
+465,Donald J. Trump,Wilcox,2096
+466,Hillary Clinton,Wilcox,852
+467,Other,Wilcox,25
+468,Donald J. Trump,Wilkes,2572
+469,Hillary Clinton,Wilkes,1848
+470,Other,Wilkes,57
+471,Donald J. Trump,Wilkinson,2333
+472,Hillary Clinton,Wilkinson,1894
+473,Other,Wilkinson,51
+474,Donald J. Trump,Worth,6152
+475,Hillary Clinton,Worth,2020
+476,Other,Worth,108
