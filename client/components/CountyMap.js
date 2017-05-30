@@ -2,11 +2,11 @@ import React, { Component } from "react"
 import { geoMercator, geoPath } from "d3-geo"
 import { feature } from "topojson-client"
 
-class WorldMap extends Component {
+class CountyMap extends Component {
   constructor() {
     super()
     this.state = {
-      worlddata: [],
+      countyData: [],
       cities: [
         { name: "Tokyo",          coordinates: [139.6917,35.6895],  population: 37843000 },
         { name: "Jakarta",        coordinates: [106.8650,-6.1751],  population: 30539000 },
@@ -41,16 +41,16 @@ class WorldMap extends Component {
       ],
     }
 
-    this.handleCountryClick = this.handleCountryClick.bind(this)
+    this.handleCountyClick = this.handleCountyClick.bind(this)
     this.handleMarkerClick = this.handleMarkerClick.bind(this)
   }
   projection() {
     return geoMercator()
       .scale(100)
-      .translate([ 800 / 2, 450 / 2 ])
+      .translate([ 1600 / 2, 9000 / 2 ])
   }
-  handleCountryClick(countryIndex) {
-    console.log("Clicked on country: ", this.state.worlddata[countryIndex])
+  handleCountyClick(countryIndex) {
+    console.log("Clicked on country: ", this.state.countyData[countryIndex])
   }
   handleMarkerClick(i) {
     console.log("Marker: ", this.state.cities[i])
@@ -62,27 +62,27 @@ class WorldMap extends Component {
           console.log(`There was a problem: ${response.status}`)
           return
         }
-        response.json().then(worlddata => {
+        response.json().then(countyData => {
           this.setState({
-            worlddata: feature(worlddata, worlddata.objects.countries).features,
+            countyData: feature(countyData, countyData.objects.countries).features,
           })
         })
       })
   }
   render() {
     return (
-      <svg width={ 800 } height={ 450 } viewBox="0 0 800 450">
+      <svg width={ 1600 } height={ 900 } viewBox="0 0 1600 900">
         <g className="countries">
           {
-            this.state.worlddata.map((d,i) => (
+            this.state.countyData.map((d,i) => (
               <path
                 key={ `path-${ i }` }
                 d={ geoPath().projection(this.projection())(d) }
                 className="country"
-                fill={ `rgba(38,50,56,${ 1 / this.state.worlddata.length * i})` }
+                fill={ `rgba(38,50,56,${ 1 / this.state.countyData.length * i})` }
                 stroke="#FFFFFF"
                 strokeWidth={ 0.5 }
-                onClick={ () => this.handleCountryClick(i) }
+                onClick={ () => this.handleCountyClick(i) }
               />
             ))
           }
@@ -108,4 +108,4 @@ class WorldMap extends Component {
   }
 }
 
-export default WorldMap
+export default CountyMap

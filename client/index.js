@@ -2,8 +2,8 @@
 import React from "react"
 import ReactDOM from "react-dom"
 
-import WorldMap from "./components/WorldMap"
+import CountyMap from "./components/CountyMap"
 
 document.addEventListener("DOMContentLoaded", () => {
-  ReactDOM.render(<WorldMap />, document.getElementById("app"))
+  ReactDOM.render(<CountyMap />, document.getElementById("app"))
 })

@@ -11928,13 +11928,13 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var WorldMap = function (_Component) {
-  _inherits(WorldMap, _Component);
+var CountyMap = function (_Component) {
+  _inherits(CountyMap, _Component);
 
-  function WorldMap() {
-    _classCallCheck(this, WorldMap);
+  function CountyMap() {
+    _classCallCheck(this, CountyMap);
 
-    var _this = _possibleConstructorReturn(this, (WorldMap.__proto__ || Object.getPrototypeOf(WorldMap)).call(this));
+    var _this = _possibleConstructorReturn(this, (CountyMap.__proto__ || Object.getPrototypeOf(CountyMap)).call(this));
 
     _this.state = {
       worlddata: [],
@@ -11946,7 +11946,7 @@ var WorldMap = function (_Component) {
     return _this;
   }
 
-  _createClass(WorldMap, [{
+  _createClass(CountyMap, [{
     key: "projection",
     value: function projection() {
       return (0, _d3Geo.geoMercator)().scale(100).translate([800 / 2, 450 / 2]);
@@ -12025,10 +12025,10 @@ var WorldMap = function (_Component) {
     }
   }]);
 
-  return WorldMap;
+  return CountyMap;
 }(_react.Component);
 
-exports.default = WorldMap;
+exports.default = CountyMap;
 
 /***/ }),
 /* 132 */
@@ -12055,14 +12055,14 @@ var _reactDom = __webpack_require__(132);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _WorldMap = __webpack_require__(131);
+var _CountyMap = __webpack_require__(131);
 
-var _WorldMap2 = _interopRequireDefault(_WorldMap);
+var _CountyMap2 = _interopRequireDefault(_CountyMap);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 document.addEventListener("DOMContentLoaded", function () {
-  _reactDom2.default.render(_react2.default.createElement(_WorldMap2.default, null), document.getElementById("app"));
+  _reactDom2.default.render(_react2.default.createElement(_CountyMap2.default, null), document.getElementById("app"));
 });
 
 /***/ }),
