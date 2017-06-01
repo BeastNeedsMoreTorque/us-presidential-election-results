@@ -15,7 +15,7 @@ app.use((req, res) => {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Secure App Scaffold</title>
+        <title>US 2016 Presidential General Election Results</title>
         <link rel="stylesheet" href="fiber.min.css" />
       </head>
       <body class="m0">

@@ -1,7 +1,7 @@
 {
-  "name": "react-svg-maps-tutorial",
-  "version": "1.0.0",
-  "description": "A basic example of a pure react SVG world map created with react, d3-geo and topojson-client.",
+  "name": "us-presidential-election-results",
+  "version": "0.0.1",
+  "description": "A data-driven analysis of the results of the United States 2016 Presidential General Election results.",
   "main": "index.js",
   "scripts": {
     "start": "node index",
@@ -14,7 +14,7 @@
       "react"
     ]
   },
-  "author": "Richard Zimerman <richard@zcreativelabs.com> (https://github.com/zimrick)",
+  "author": "Tony McGovern <tonmcg@gmail.com> (https://github.com/tonmcg)",
   "license": "MIT",
   "dependencies": {
     "d3-geo": "1.6.4",
