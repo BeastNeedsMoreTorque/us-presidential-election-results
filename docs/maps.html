@@ -303,11 +303,8 @@
 
                     if (e.target.nodeName == 'path') {
                         let d = d3.select(e.target).data()[0];
-                        let key = dictCounties[d.id].County + ', ' + dictCounties[d.id].State + '<br>' + 'Voted for: ' + dictCounties[d.id].election_result + '<br>' + cols[measure].label + ': ' + dictCounties[d.id][measure];
-                        let amount = null;
-                        let count = null;
-                        let percent = null
-                        showDetail(e, key, null, null, null)
+                        let content = dictCounties[d.id].County + ', ' + dictCounties[d.id].State + '<br>' + 'Voted for: ' + dictCounties[d.id].election_result + '<br>' + cols[measure].label + ': ' + dictCounties[d.id][measure];
+                        showDetail(e, content)
                     }
                 });
 
@@ -406,17 +403,11 @@
         }
 
         // Show tooltip on hover
-        function showDetail(event, key, amount, count, percent) {
+        function showDetail(event, content) {
 
             // show tooltip with information from the __data__ property of the element
             let x_hover = 0;
             let y_hover = 0;
-
-            let content = "<b>" + key + "</b><br/>";
-
-            if (amount != null) content += "<b>Amount: </b>" + amount + "<br/>";
-            if (count != null) content += "<b>Count: </b>" + count + "<br/>";
-            if (percent != null) content += "<b>Percent: </b>" + percent + "<br/>";
 
             let tooltipWidth = parseInt(tooltip.style('width'));
             let tooltipHeight = parseInt(tooltip.style('height'));
