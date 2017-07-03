@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<style>
+    .counties {
+        fill: none;
+    }
+    
+    .states {
+        fill: none;
+        stroke: #fff;
+        stroke-linejoin: round;
+    }
+    
+    .tooltip {
+        top: 100px;
+        left: 100px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        /*border: 2px solid #000;*/
+        background: #333;
+        opacity: .9;
+        color: white;
+        padding: 10px;
+        min-width: 375px;
+        min-width: 36.75vmin;
+        font-size: 2.25vmin;
+        line-height: 24pt;
+        font-weight: lighter;
+        visibility: visible;
+    }
+    
+    .tooltip.right::before {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        opacity: .9;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        border-left: 8px solid #333;
+        right: -8px;
+        top: 35px;
+        /* arbitrarily set */
+    }
+    
+    .tooltip.left::before {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        position: absolute;
+        opacity: .9;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+        left: -8px;
+        border-right: 8px solid #333;
+        top: 35px;
+        /* arbitrarily set */
+    }
+    /* SVG Scaling */
+    
+    .scaling-svg-container {
+        position: relative;
+        height: 0;
+        width: 100%;
+        padding: 0
+    }
+    
+    .scaling-svg {
+        position: absolute;
+        height: 99%;
+        width: 100%;
+        left: 0;
+        top: 0
+    }
+</style>
+
+
+<div class="container">
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="dimensions" class="col-sm-2 col-form-label">Select measure</label>
+            <select class="form-select" id="dimensions">
+                <option value="unemployment">Unemployment</option>
+                <option value="uninsured">Uninsured</option>
+                <option value="smokers">Smokers</option>
+                <option value="singleparent" selected>Single-Parent Households</option>
+                <option value="income">Income Ratio</option>
+                <option value="somecollege">Some College</option>
+                <option value="mentalhealth">Mentally Unhealthy Days</option>
+                <option value="physicalhealth">Physically Unhealthy Days</option>
+                <option value="chlamydia">Chlamydia</option>
+                <option value="association">Association</option>
+                <option value="teenbirth">Teen Birth</option>
+                <option value="housingproblems">Severe Housing Problems</option>
+                <option value="excessdrink">Excessive Drinking</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="textDescription">
+            <h2>Children in single-parent households</h2>
+            <p>Children in Single-Parent Households is the percentage of children in family households where the household is headed by a single parent (male or female head of household with no spouse present).</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="scaling-svg-container">
+            <svg width="960" height="600"></svg>
+        </div>
+    </div>
+</div>
+</div>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script>
+    let measure = 'singleparent';
+
+    let margin = {
+        top: 50,
+        bottom: 50,
+        left: 10,
+        right: 10
+    }
+
+    // create tooltip
+    let tooltip = d3.select("body").append("div").style("position", "absolute").style("z-index", "10").style("visibility", "hidden").attr("class", "tooltip");
+    let errorCount = 0;
+
+    let svg = d3.select("svg");
+
+    let path = d3.geoPath();
+
+    let x = d3.scaleLinear()
+        .rangeRound([600, 860]);
+
+    let color = d3.scaleSequential(d3.interpolateOranges);
+
+    let select = d3.select('#dimensions');
+
+    let g = svg.append("g")
+        .attr("class", "key")
+        .attr("transform", "translate(0,40)");
+
+                // <option value="unemployment">Unemployment</option>
+                // <option value="uninsured">Uninsured</option>
+                // <option value="smokers">Smokers</option>
+                // <option value="singleparent" selected>Single-Parent Households</option>
+                // <option value="income">Income Ratio</option>
+                // <option value="somecollege">Some College</option>
+                // <option value="mentalhealth">Mentally Unhealthy Days</option>
+                // <option value="physicalhealth">Physically Unhealthy Days</option>
+                // <option value="chlamydia">Chlamydia</option>
+                // <option value="association">Association</option>
+                // <option value="teenbirth">Teen Birth</option>
+                // <option value="housingproblems">Severe Housing Problems</option>
+                // <option value="excessdrink">Excessive Drinking</option>
+
+        
+    let cols = [{
+        "unemployment": {
+            "label": "% unemployment",
+            "type": "percentage",
+            "title": "Unemployment rate",
+            "description": "Taken from the Local Area Unemployment Statistics (LAUS) program, the Unemployment Rate is a monthly estimate of total employment and unemployment for approximately 7,500 areas, including county and county equivalents."
+        },
+        "uninsured": {
+            "label": "% Uninsured",
+            "type": "percentage",
+            "title": "Uninsured adults",
+            "description": "Uninsured Adults is the percentage of the population ages 18 to 65 that has no health insurance coverage in a given county."
+        },
+        "smokers": {
+            "label": "% Smokers",
+            "type": "percentage",
+            "title": "Adult smoking",
+            "description": "Adult Smoking is the percentage of the adult population that currently smokes every day or most days and has smoked at least 100 cigarettes in their lifetime."
+        },
+        "singleparent": {
+            "label": "% Single-Parent Households",
+            "type": "percentage",
+            "title": "Children in single-parent households",
+            "description": "Children in Single-Parent Households is the percentage of children in family households where the household is headed by a single parent (male or female head of household with no spouse present)."
+        },
+        "income": {
+            "label": "Income Ratio",
+            "type": "percentage",
+            "title": "Income inequality",
+            "description": "Income Inequality is the ratio of household income at the 80th percentile to that at the 20th percentile, i.e., when the incomes of all households in a county are listed from highest to lowest, the 80th percentile is the level of income at which only 20% of households have higher incomes, and the 20th percentile is the level of income at which only 20% of households have lower incomes. A higher inequality ratio indicates greater division between the top and bottom ends of the income spectrum."
+        },
+        "somecollege": {
+            "label": "% Some College",
+            "type": "percentage",
+            "title": "Some college",
+            "description": "Some College is the percentage of the population ages 25-44 with some post-secondary education, such as enrollment in vocational/technical schools, junior colleges, or four-year colleges. It includes individuals who pursued education following high school but did not receive a degree."
+        },
+        "mentalhealth": {
+            "label": "Mentally Unhealthy Dayse",
+            "type": "percentage",
+            "title": "Poor mental health days",
+            "description": "Poor Mental Health Days is based on survey responses to the question: “Thinking about your mental health, which includes stress, depression, and problems with emotions, for how many days during the past 30 days was your mental health not good?” The value reported in the County Health Rankings is the average number of days a county’s adult respondents report that their mental health was not good. The measure is age-adjusted to the 2000 US population."
+        },
+        "physicalhealth": {
+            "label": "Physically Unhealthy Dayse",
+            "type": "percentage",
+            "title": "Poor physical health days",
+            "description": "Poor Physical Health Days is based on survey responses to the question: “Thinking about your physical health, which includes physical illness and injury, for how many days during the past 30 days was your physical health not good?” The value reported in the County Health Rankings is the average number of days a county’s adult respondents report that their physical health was not good. The measure is age-adjusted to the 2000 US population."
+        },
+        "association": {
+            "label": "Association Rate",
+            "type": "number",
+            "title": "Social association",
+            "description": "Social Associations is the number of associations per 10,000 population. Associations include membership organizations such as civic organizations, bowling centers, golf clubs, fitness centers, sports organizations, religious organizations, political organizations, labor organizations, business organizations, and professional organizations. These associations are identified by NAICS codes 813410, 713950, 713910, 713940, 711211, 813110, 813940, 813930, 813910 and 813920."
+        },
+        "teenbirth": {
+            "label": "Teen Birth Rate",
+            "type": "number",
+            "title": "Teen births",
+            "description": "Teen Births are the number of births per 1,000 female population, ages 15-19."
+        },
+        "excessdrink": {
+            "label": "% Excessive Drinking",
+            "type": "percentage",
+            "title": "Excessive drinking",
+            "description": "Excessive Drinking is the percentage of adults that report either binge drinking, defined as consuming more than 4 (women) or 5 (men) alcoholic beverages on a single occasion in the past 30 days, or heavy drinking, defined as drinking more than one (women) or 2 (men) drinks per day on average."
+        },
+        "housingproblems": {
+            "label": "% Severe Housing Problems",
+            "type": "percentage",
+            "title": "Severe housing problems",
+            "description": "Severe Housing Problems is the percentage of households with at least one or more of the following housing problems:\nhousing unit lacks complete kitchen facilities;\nhousing unit lacks complete plumbing facilities;\nhousehold is severely overcrowded; or\nhousehold is severely cost burdened.\nSevere overcrowding is defined as more than 1.5 persons per room. Severe cost burden is defined as monthly housing costs (including utilities) that exceed 50% of monthly income."
+        },
+        "chlamydia": {
+            "label": "Chlamydia Rate",
+            "type": "number",
+            "title": "Sexually transmitted infection rate",
+            "description": "Sexually Transmitted Infections (STI) are measured as the chlamydia incidence (number of new cases reported) per 100,000 population."
+        }
+        
+        
+    }];
+
+    function ready(error, us, data) {
+        if (error) throw error;
+
+        select.on('change', function(d) {
+            measure = this.value;
+            renderMap();
+            renderText();
+        });
+
+        // define mouseover and mouseout events
+        function bindHover() {
+            document.body.addEventListener('mousemove', function(e) {
+
+                if (e.target.nodeName == 'path') {
+                    let d = d3.select(e.target).data()[0];
+                    let key = dictCounties[d.id].County + ', ' + dictCounties[d.id].State + '<br>' + 'Voted for: ' + dictCounties[d.id].election_result + '<br>' + measure.charAt(0).toUpperCase() + measure.substr(1).toLowerCase() + ': ' + dictCounties[d.id][measure];
+                    let amount = null;
+                    let count = null;
+                    let percent = null
+                    showDetail(e, key, null, null, null)
+                }
+            });
+
+            document.body.addEventListener('mouseout', function(e) {
+                if (e.target.nodeName == 'path') hideDetail();
+            });
+        }
+
+        let dictCounties = {};
+        data.forEach(function(d) {
+            d.unemployment = (+d['% unemployment'] * 100).toPrecision(3);
+            d.smokers = +d['% Smokers'];
+            d.singleparent = +d['% Single-Parent Households'];
+            d.excessdrink = +d['% Excessive Drinking'];
+            d.income = +d['Income Ratio'];
+            d.somecollege = d['% Some College'];
+            d.mentalhealth = +d['Mentally Unhealthy Days'];
+            d.physicalhealth = +d['Physically Unhealthy Days'];
+            d.chlamydia = +d['Chlamydia Rate']; // new cases per 100,000
+            d.association = +d['Association Rate']; // number of associations per 10,000 population
+            d.uninsured = +d['% Uninsured'];
+            d.access = +d['% With Access'];
+            d.teenbirth = +d['Teen Birth Rate']; // number of births per 1,000 female population, ages 15-19
+            d.housingproblems = +d['% Severe Housing Problems'];
+            dictCounties[d.FIPS] = d;
+        });
+
+        let group = svg.append("g")
+            .attr("class", "counties");
+
+        let countyPathEnter = group.selectAll("path")
+            .data(topojson.feature(us, us.objects.counties).features)
+            .enter()
+
+        let countyPathUpdate = countyPathEnter.append("path");
+
+        let statePathUpdate = svg.append("path")
+            .datum(topojson.mesh(us, us.objects.states, function(a, b) {
+                return a !== b;
+            }));
+
+        statePathUpdate.attr("class", "states")
+            .attr("d", path);
+            
+        function renderMap() {
+
+            let extent = d3.extent(data, function(d) {
+                return dictCounties[d.FIPS][measure];
+            });
+
+            x.domain(extent);
+
+            color.domain([extent[0], extent[1]]);
+
+            countyPathUpdate
+                .transition()
+                .duration(1000)
+                .attr("fill", function(d) {
+                    let county = dictCounties[d.id];
+                    if (county)
+                        return color(county[measure]);
+                    else {
+                        errorCount++;
+                        console.log(d.id + " Not found" + " errors = " + errorCount);
+                        return color(0);
+                    }
+                })
+                .attr("d", path);
+
+        }
+        
+        function renderText() {
+            
+            let textHeader =  d3.select('#textDescription h2');
+            let textDescription =  d3.select('#textDescription p');
+            
+            let title = cols[0][measure].title;
+            let description = cols[0][measure].description;
+        
+            textHeader.transition().duration(1000).text(title);
+            textDescription.transition().duration(1000).text(description);
+
+        }
+
+        renderMap();
+        bindHover();
+        setResponsiveSVG(d3)
+
+    }
+
+    // Show tooltip on hover
+    function showDetail(event, key, amount, count, percent) {
+
+        // show tooltip with information from the __data__ property of the element
+        let x_hover = 0;
+        let y_hover = 0;
+
+        let content = "<b>" + key + "</b><br/>";
+
+        if (amount != null) content += "<b>Amount: </b>" + amount + "<br/>";
+        if (count != null) content += "<b>Count: </b>" + count + "<br/>";
+        if (percent != null) content += "<b>Percent: </b>" + percent + "<br/>";
+
+        let tooltipWidth = parseInt(tooltip.style('width'));
+        let tooltipHeight = parseInt(tooltip.style('height'));
+        let classed, notClassed;
+
+        if (event.pageX > document.body.clientWidth / 2) {
+            x_hover = tooltipWidth + 30;
+            classed = 'right';
+            notClassed = 'left';
+        }
+        else {
+            x_hover = -30;
+            classed = 'left';
+            notClassed = 'right';
+        }
+
+        y_hover = (document.body.clientHeight - event.pageY < (tooltipHeight + 4)) ? event.pageY - (tooltipHeight + 4) : event.pageY - tooltipHeight / 2;
+
+        return tooltip
+            .classed(classed, true)
+            .classed(notClassed, false)
+            .style("visibility", "visible")
+            .style("top", y_hover + "px")
+            .style("left", (event.pageX - x_hover) + "px")
+            .html(content);
+    }
+
+    // Hide tooltip on hover
+    function hideDetail() {
+
+        // hide tooltip
+        return tooltip.style("visibility", "hidden");
+    }
+
+    // Many browsers -- IE particularly -- will not auto-size inline SVG
+    // IE applies default width and height sizing
+    // padding-bottom hack on a container solves IE inconsistencies in size
+    // https://css-tricks.com/scale-svg/#article-header-id-10
+    function setResponsiveSVG(chart) {
+        let width = +chart.select('svg').attr('width');
+        let height = +chart.select('svg').attr('height');
+        let calcString = +(height / width) * 100 + "%";
+
+        let svgElement = chart.select('svg');
+        let svgParent = d3.select(chart.select('svg').node().parentNode);
+
+        svgElement.attr({
+            'class': 'scaling-svg',
+            'preserveAspectRatio': 'xMinYMin',
+            'viewBox': '0 0 ' + width + ' ' + height,
+            'width': null,
+            'height': null
+        });
+
+        svgParent.style('padding-bottom', calcString);
+    }
+
+
+    d3.queue()
+        .defer(d3.json, "https://d3js.org/us-10m.v1.json")
+        .defer(d3.csv, "https://raw.githubusercontent.com/tonmcg/us-presidential-election-results/master/public/data/chr.csv")
+        .await(ready);
+</script>
