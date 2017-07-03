@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Playfair Display">
     <style>
         body {
-            font-family: 'Raleway', serif;
+            font-family: 'Playfair Display', serif;
         }
         
         .counties {
@@ -116,7 +116,7 @@
                 <svg width="960" height="600"></svg>
             </div>
         </div>
-        <div class="col-md-3 col-xs-3">
+        <div class="col-md-3 col-xs-3" style="padding-right:25px">
             <div id="textDescription">
                 <h3></h3>
                 <p></p>
@@ -281,8 +281,10 @@
                 "description": "Sexually Transmitted Infections (STI) are measured as the chlamydia incidence (number of new cases reported) per 100,000 population."
             }
         };
-
-        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols)).enter();
+        
+        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort(function(a,b) {
+            return b - a;
+        })).enter();
 
         var selectUpdate = selectEnter.append('option');
 
@@ -296,7 +298,7 @@
             }
         });
 
-        function ready(error, us, data) {
+        function createMap(error, us, data) {
             if (error) throw error;
 
             // define mouseover and mouseout events
@@ -476,7 +478,7 @@
         d3.queue()
             .defer(d3.json, "https://d3js.org/us-10m.v1.json")
             .defer(d3.csv, "https://raw.githubusercontent.com/tonmcg/us-presidential-election-results/master/public/data/chr.csv")
-            .await(ready);
+            .await(createMap);
     </script>
 </body>
 
