@@ -7,10 +7,10 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <style>
-      body {
-        font-family: 'Raleway', serif;
-      }    
-    
+        body {
+            font-family: 'Raleway', serif;
+        }
+        
         .counties {
             fill: none;
         }
@@ -85,52 +85,60 @@
             top: 0
         }
     </style>
-    
+
 </head>
 
 
 <body>
-    <div class="container">
-        <div class="row">
+
+    <div class="row">
+        <div class="col-xs-1 col-md-1"></div>
+        <div class="col-xs-10 col-md-10">
             <div class="page-header">
-                <h2>County Factors Visualized <small>Explaining the Results of the 2016 Presidential Election</small></h2>
+                <h2>County Factors Visualized <small>Exploring the Health of the U.S. Prior to the 2016 Presidential Election</small></h2>
             </div>
         </div>
-        <div class="row" style="height:130px">
-            <div class="col-md-12">
-                <div id="textDescription">
-                    <h4></h4>
-                    <p></p>
-                    <footnote></footnote>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="form-group pull-right">
-                <!--<label for="dimensions" class="col-sm-2 col-form-label">Measure</label>-->
+        <div class="col-xs-1 col-md-1"></div>
+    </div>
+    <div class="row">
+        <div class="col-xs-1 col-md-1"></div>
+        <div class="col-xs-10 col-md-10">
+            <div class="form-group">
+                <label for="dimensions" class="col-form-label">Factor </label>
                 <select class="custom-select" id="dimensions"></select>
             </div>
-            <div class="col-md-12">
-                <div class="scaling-svg-container">
-                    <svg width="960" height="600"></svg>
-                </div>
+        </div>
+        <div class="col-xs-1 col-md-1"></div>
+    </div>
+    <div class="row" style="height:625px">
+        <div class="col-md-9 col-xs-9">
+            <div class="scaling-svg-container">
+                <svg width="960" height="600"></svg>
             </div>
         </div>
-
-
+        <div class="col-md-3 col-xs-3">
+            <div id="textDescription">
+                <h3></h3>
+                <p></p>
+                <footnote></footnote>
+            </div>
+        </div>
     </div>
+    <div class="row">
+        <div class="col-xs-1 col-md-1"></div>
+        <div class="col-xs-10 col-md-10">
+            <footer>
+                <span>Analysis and visualizations by Scott Gregoire, Nick Heitzman, and Tony McGovern</span>
+            </footer>
+        </div>
+        <div class="col-xs-1 col-md-1"></div>
+    </div>
+
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://d3js.org/topojson.v2.min.js"></script>
     <script>
         let measure = 'singleparent';
-
-        let margin = {
-            top: 50,
-            bottom: 50,
-            left: 10,
-            right: 10
-        }
 
         // create tooltip
         let tooltip = d3.select("body").append("div").style("position", "absolute").style("z-index", "10").style("visibility", "hidden").attr("class", "tooltip");
@@ -230,7 +238,7 @@
                 "title": "Social association",
                 "url": "http://www.countyhealthrankings.org/measure/social-associations",
                 "source": "University of Wisconsin Population Health Institute",
-                "description": "Social Associations is the number of associations per 10,000 population. Associations include membership organizations such as civic organizations, bowling centers, golf clubs, fitness centers, sports organizations, religious organizations, political organizations, labor organizations, business organizations, and professional organizations. These associations are identified by NAICS codes 813410, 713950, 713910, 713940, 711211, 813110, 813940, 813930, 813910 and 813920."
+                "description": "Social Associations is the number of associations per 10,000 population. Associations include membership organizations such as civic organizations, bowling centers, golf clubs, fitness centers, sports organizations, religious organizations, political organizations, labor organizations, business organizations, and professional organizations."
             },
             "teenbirth": {
                 "label": "Teen Birth Rate",
@@ -291,17 +299,11 @@
         function ready(error, us, data) {
             if (error) throw error;
 
-            measureSelect.on('change', function(d) {
-                measure = this.value;
-                renderMap();
-                renderText();
-            });
-
             // define mouseover and mouseout events
             function bindHover() {
                 document.body.addEventListener('mousemove', function(e) {
 
-                    if (e.target.nodeName == 'path') {
+                    if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
                         let d = d3.select(e.target).data()[0];
                         let content = dictCounties[d.id].County + ', ' + dictCounties[d.id].State + '<br>' + 'Voted for: ' + dictCounties[d.id].election_result + '<br>' + cols[measure].label + ': ' + dictCounties[d.id][measure];
                         showDetail(e, content)
@@ -350,6 +352,12 @@
 
             statePathUpdate.attr("class", "states")
                 .attr("d", path);
+                
+            measureSelect.on('change', function(d) {
+                measure = this.value;
+                renderMap();
+                renderText();
+            });
 
             function renderMap() {
 
@@ -380,7 +388,7 @@
 
             function renderText() {
 
-                let textHeader = d3.select('#textDescription h4');
+                let textHeader = d3.select('#textDescription h3');
                 let textDescription = d3.select('#textDescription p');
                 let textFootnote = d3.select('#textDescription > footnote');
 
@@ -464,7 +472,6 @@
 
             svgParent.style('padding-bottom', calcString);
         }
-
 
         d3.queue()
             .defer(d3.json, "https://d3js.org/us-10m.v1.json")
