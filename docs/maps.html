@@ -91,13 +91,13 @@
         }
         /* SVG Scaling */
         
-        body,
-        svg {
-            height: 100%;
-            margin: 0;
-            width: 100%;
-            float: left;
-        }
+        /*body,*/
+        /*svg {*/
+        /*    height: 100%;*/
+        /*    margin: 0;*/
+        /*    width: 100%;*/
+        /*    float: left;*/
+        /*}*/
         
         .scaling-svg-container {
             position: relative;
@@ -143,7 +143,7 @@
         <div class="row" id="canvas">
             <div class="col-xs-1 col-md-1"></div>
             <div class="col-md-9 col-xs-9">
-                <div>
+                <div class="scaling-svg-container">
                     <svg></svg>
                 </div>
             </div>
@@ -194,6 +194,14 @@
                 "url": "http://www.countyhealthrankings.org/measure/primary-care-physicians",
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Primary Care Physicians is the ratio of the population to total primary care physicians. Primary care physicians include non-federal, practicing physicians (M.D.'s and D.O.'s) under age 75 specializing in general practice medicine, family medicine, internal medicine, and pediatrics."
+            },
+            "population": {
+                "label": "Population",
+                "type": "number",
+                "title": "Population",
+                "url": "https://www2.census.gov/programs-surveys/popest/datasets/2010-2016/counties/totals/",
+                "source": "United States Census",
+                "description": "Population estimates totals provided by the Census Bureau and are as of 2016"
             },
             "pollution": {
                 "label": "Average Daily PM2.5",
@@ -400,6 +408,25 @@
             trail: 40, // Afterglow percentage
             className: 'spinner', // The CSS class to assign to the spinner
         };
+        
+        // number formats
+        function formatAbbreviation(x) {
+            var v = Math.abs(x);
+            return (v >= 0.9995e9 ? formatBillion : v >= 0.9995e6 ? formatMillion : formatThousand)(x);
+        }
+        
+        // local formatting to get billions
+        // https://github.com/d3/d3/issues/2241
+        let formatNumber = d3.format(".1f"),
+        formatBillion = function(x) {
+            return formatNumber(x / 1e9) + "B";
+        },
+        formatMillion = function(x) {
+            return formatNumber(x / 1e6) + "M";
+        },
+        formatThousand = function(x) {
+            return formatNumber(x / 1e3) + "k";
+        };        
 
         // create spinner
         let target = d3.select("body").node();
@@ -423,8 +450,6 @@
         let width = 1024;
         let height = 600;
 
-        // let color = d3.scaleSequential(d3.interpolateOranges);
-
         let projection = d3.geoAlbersUsa()
             .scale(width * 1.25)
             .translate([width / 2, height / 2]);
@@ -434,7 +459,7 @@
         ;
 
         let svg = d3.select("svg")
-            .attr("viewBox", "0 0 " + width + " " + height) // responsive resizing
+            // .attr("viewBox", "0 0 " + width + " " + height) // responsive resizing
             .attr("width", width)
             .attr("height", height);
 
@@ -453,10 +478,11 @@
             }
         });
 
-        // counter for missing counties; set to zero
+        // counter for missing counties (usually in Alaska)
         let countMissing = 0;
 
         function createMap(error, us, data) {
+            
             if (error) throw error;
 
             // stop spin.js loader
@@ -465,6 +491,7 @@
             // parse data
             let countyObj = {};
             data.forEach(function(d) {
+                d.population = +d['Population'];
                 d.pollution = +d['Average Daily PM2.5'];
                 d.violentcrime = +d['Violent Crime Rate'];
                 d.commute = +d['% Long Commute - Drives Alone'];
@@ -494,6 +521,9 @@
                 countyObj[d.FIPS] = d;
             });
 
+            let centered;
+
+            // render map colors based on data
             function renderMap() {
 
                 let extent = d3.extent(data, function(d) {
@@ -503,14 +533,14 @@
                 color.domain([extent[0], extent[1]]);
 
                 // update legend
-                legendLinear
+                legend
                     .labelFormat(function(d) {
                         let value;
                         if (cols[measure].type == 'percentage') {
                             value = d3.format(".0%")(d / 100);
                         }
                         else {
-                            value = d3.format(".0f")(d);
+                            value = formatAbbreviation(d);
                         }
                         return value;
                     })
@@ -518,7 +548,7 @@
                     .scale(color);
 
                 svg.select(".legend")
-                    .call(legendLinear);
+                    .call(legend);
 
                 countyPathUpdate
                     .transition()
@@ -536,6 +566,31 @@
 
             }
 
+            // define mouseover and mouseout events
+            function bindHover() {
+                document.body.addEventListener('mousemove', function(e) {
+    
+                    if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
+                        let d = d3.select(e.target).data()[0];
+                        let value = cols[measure].type == 'percentage' ? d3.format(".1%")(countyObj[d.id][measure]/100) : d3.format(",.0f")(countyObj[d.id][measure]);
+                        let content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + value;
+                        showDetail(e, content);
+                    }
+                });
+    
+                document.body.addEventListener('mouseout', function(e) {
+                    if (e.target.nodeName == 'path') hideDetail();
+                });
+            }
+    
+            // define zoom function
+            function zoomed() {
+                group.attr("transform", d3.event.transform);
+                group.select(".nation").style("stroke-width", 0.5 / d3.event.scale + "px");
+                group.select(".states").style("stroke-width", 1 / d3.event.scale + "px");
+                group.select(".counties").style("stroke-width", 0.1 / d3.event.scale + "px");
+            }
+    
             // When clicked, zoom in
             function clicked(d) {
                 var x, y, k;
@@ -566,49 +621,9 @@
                         .translate(-x, -y));
             }
 
-            function renderText() {
-
-                let textHeader = d3.select('#textDescription h3');
-                let textDescription = d3.select('#textDescription p');
-                let textFootnote = d3.select('#source > footnote');
-
-                let title = cols[measure].title;
-                let description = cols[measure].description;
-                let url = cols[measure].url;
-                let source = cols[measure].source;
-
-                textHeader.style("opacity", 0).transition().duration(1000).style("opacity", 1).text(title);
-                textDescription.style("opacity", 0).transition().duration(1000).style("opacity", 1).text(description);
-                textFootnote.html('<em>Source: </em><span><a href="' + url + '" target="_blank">' + source + '</span></a>');
-
-            }
-
-            // define mouseover and mouseout events
-            function bindHover() {
-                document.body.addEventListener('mousemove', function(e) {
-
-                    if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
-                        let d = d3.select(e.target).data()[0];
-                        let content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + countyObj[d.id][measure];
-                        showDetail(e, content);
-                    }
-                });
-
-                document.body.addEventListener('mouseout', function(e) {
-                    if (e.target.nodeName == 'path') hideDetail();
-                });
-            }
-
-            function zoomed() {
-                console.log(d3.event.transform);
-                group.attr("transform", d3.event.transform);
-                group.select(".nation").style("stroke-width", 0.5 / d3.event.scale + "px");
-                group.select(".states").style("stroke-width", 1 / d3.event.scale + "px");
-                group.select(".counties").style("stroke-width", 0.1 / d3.event.scale + "px");
-            }
-
             let color = d3.scaleQuantize().range(d3.schemeOranges[9]);
 
+            // create background box for zoom
             svg.append("rect")
                 .attr("class", "background")
                 .attr("width", width)
@@ -623,17 +638,11 @@
 
             let group = svg.append("g");
 
-            let centered;
-
             group.append("path")
                 .datum(topojson.feature(us, us.objects.nation))
                 .attr("class", "nation")
                 .attr("d", path)
                 .style("stroke-width", "0.5px");
-
-            let countyPathEnter = group.selectAll("path")
-                .data(topojson.feature(us, us.objects.counties).features)
-                .enter();
 
             group.append("path")
                 .datum(topojson.mesh(us, us.objects.states, function(a, b) {
@@ -643,6 +652,10 @@
                 .attr("d", path)
                 .style("stroke-width", "1px");
 
+            let countyPathEnter = group.selectAll("path")
+                .data(topojson.feature(us, us.objects.counties).features)
+                .enter();
+
             let countyPathUpdate = countyPathEnter
                 .append('path')
                 .attr("class", "counties")
@@ -651,30 +664,49 @@
                 .on("click", clicked);
 
             // create legend
-            // adapted from John A Guerra
-            // http://johnguerra.co/viz/USElections2016/
+            // use Susie Lu's d3-legend plugin
+            // http://d3-legend.susielu.com/
             svg.append("g")
                 .attr("class", "legend")
-                .attr("transform", "translate(" + (width - width * 3 / 4) + ",10)");
+                .attr("transform", "translate(" + (width - width * 15/16) + ",10)");
 
-            let legendLinear = d3.legendColor()
-                .shapeWidth(60)
+            let legend = d3.legendColor()
+                .shapeWidth(90)
                 .cells(6)
                 .orient("horizontal")
-                .labelOffset(5)
+                .labelOffset(2)
                 .ascending(true)
-                .labelAlign("end")
+                .labelAlign("middle")
                 .shapePadding(2);
 
             renderMap();
             renderText();
             bindHover();
+            setResponsiveSVG();
 
             measureSelect.on('change', function(d) {
                 measure = this.value;
                 renderMap();
                 renderText();
             });
+
+        }
+        
+        // change factor description
+        function renderText() {
+
+            let textHeader = d3.select('#textDescription h3');
+            let textDescription = d3.select('#textDescription p');
+            let textFootnote = d3.select('#source > footnote');
+
+            let title = cols[measure].title;
+            let description = cols[measure].description;
+            let url = cols[measure].url;
+            let source = cols[measure].source;
+
+            textHeader.style("opacity", 0).transition().duration(1000).style("opacity", 1).text(title);
+            textDescription.style("opacity", 0).transition().duration(1000).style("opacity", 1).text(description);
+            textFootnote.html('<em>Source: </em><span><a href="' + url + '" target="_blank">' + source + '</span></a>');
 
         }
 
@@ -722,27 +754,25 @@
         // IE applies default width and height sizing
         // padding-bottom hack on a container solves IE inconsistencies in size
         // https://css-tricks.com/scale-svg/#article-header-id-10
-        function setResponsiveSVG(chart) {
-            let width = +chart.select('svg').attr('width');
-            let height = +chart.select('svg').attr('height');
+        function setResponsiveSVG() {
+            let width = +d3.select('svg').attr('width');
+            let height = +d3.select('svg').attr('height');
             let calcString = +(height / width) * 100 + "%";
 
-            let svgElement = chart.select('svg');
-            let svgParent = d3.select(chart.select('svg').node().parentNode);
+            let svgElement = d3.select('svg');
+            let svgParent = d3.select(d3.select('svg').node().parentNode);
 
-            svgElement.attr({
-                'class': 'scaling-svg',
-                'preserveAspectRatio': 'xMinYMin',
-                'viewBox': '0 0 ' + width + ' ' + height,
-                'width': null,
-                'height': null
-            });
+            svgElement
+                .attr('class', 'scaling-svg')
+                .attr('preserveAspectRatio', 'xMinYMin')
+                .attr('viewBox', '0 0 ' + width + ' ' + height)
+                .attr('width', null)
+                .attr('height', null);
 
             svgParent.style('padding-bottom', calcString);
         }
 
         d3.queue()
-            // .defer(d3.json, "https://d3js.org/us-10m.v1.json")
             .defer(d3.json, "https://unpkg.com/us-atlas@1/us/10m.json")
             .defer(d3.csv, "https://raw.githubusercontent.com/tonmcg/us-presidential-election-results/master/public/data/chr.csv")
             .await(createMap);
