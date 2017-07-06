@@ -17,8 +17,11 @@
   "author": "Tony McGovern <tonmcg@gmail.com> (https://github.com/tonmcg)",
   "license": "MIT",
   "dependencies": {
+    "autobind-decorator": "^1.4.1",
+    "d3": "^4.9.1",
     "d3-geo": "1.6.4",
     "express": "4.15.2",
+    "lodash": "^4.17.4",
     "path": "0.12.7",
     "react": "15.5.4",
     "react-dom": "15.5.4",
