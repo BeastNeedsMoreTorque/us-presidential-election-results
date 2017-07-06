@@ -10,15 +10,35 @@
         body {
             font-family: 'Lora', serif;
         }
+        /*.states {*/
+        /*    fill: none;*/
+        /*    stroke: #000000;*/
+        /*    stroke-width: 1.0px;*/
+        /*}*/
+        /*.counties {*/
+        /*    fill: #fff;*/
+        /*    stroke: #000000;*/
+        /*    stroke-width: 0.05px;*/
+        /*    pointer-events: all;*/
+        /*  }*/
+        /*.counties:hover {*/
+        /*    stroke-width: 0.5px;*/
+        /*    stroke: #000000;*/
+        /*    pointer-events: all;*/
+        /*  }*/
         
+        .nation,
+        .states,
         .counties {
             fill: none;
+            stroke: #000000;
+            stroke-linejoin: round;
+            stroke-linecap: round;
         }
         
-        .states {
-            fill: none;
-            stroke: #fff;
-            stroke-linejoin: round;
+        .background {
+            fill: #f5f5f5;
+            fill-opacity: 0.1;
         }
         
         .tooltip {
@@ -70,6 +90,14 @@
             /* arbitrarily set */
         }
         /* SVG Scaling */
+        
+        body,
+        svg {
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            float: left;
+        }
         
         .scaling-svg-container {
             position: relative;
@@ -144,11 +172,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/spin.js/2.0.1/spin.min.js" type="text/javascript"></script>
     <script src="https://d3js.org/d3.v4.min.js" type="text/javascript"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" type="text/javascript"></script>
-    <script src="https://d3js.org/topojson.v2.min.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/topojson-client@3" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.11.0/d3-legend.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
     <script defer type="text/javascript">
+        "use strict";
+
         // default view for map
-        let measure = 'unemployment';
+        let measure = 'uninsured';
 
         // define data and its attributes
         const cols = {
@@ -159,6 +191,14 @@
                 "url": "http://www.countyhealthrankings.org/measure/primary-care-physicians",
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Primary Care Physicians is the ratio of the population to total primary care physicians. Primary care physicians include non-federal, practicing physicians (M.D.'s and D.O.'s) under age 75 specializing in general practice medicine, family medicine, internal medicine, and pediatrics."
+            },
+            "pollution": {
+                "label": "Average Daily PM2.5",
+                "type": "number",
+                "title": "Air pollution-particulate matter",
+                "url": "http://www.countyhealthrankings.org/measure/air-pollution-particulate-matter",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Particulate Matter is the average daily density of fine particulate matter in micrograms per cubic meter (PM2.5) in a county. Fine particulate matter is defined as particles of air pollutants with an aerodynamic diameter less than 2.5 micrometers. These particles can be directly emitted from sources such as forest fires, or they can form when gases emitted from power plants, industries and automobiles react in the air."
             },
             "mhprate": {
                 "label": "MHP Rate",
@@ -208,6 +248,14 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Self-reported health status is a general measure of health-related quality of life (HRQoL) in a population. This measure is based on survey responses to the question: “In general, would you say that your health is excellent, very good, good, fair, or poor?” The value reported in the County Health Rankings is the percentage of adult respondents who rate their health “fair” or “poor.” The measure is modeled and age-adjusted to the 2000 US population."
             },
+            "violentcrime": {
+                "label": "Violent Crime Rate",
+                "type": "number",
+                "title": "Violent crime rate",
+                "url": "http://www.countyhealthrankings.org/measure/violent-crime-rate",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Violent Crime is the number of violent crimes reported per 100,000 population. Violent crimes are defined as offenses that involve face-to-face confrontation between the victim and the perpetrator, including homicide, rape, robbery, and aggravated assault."
+            },
             "income": {
                 "label": "Income Ratio",
                 "type": "number",
@@ -239,6 +287,22 @@
                 "url": "http://www.countyhealthrankings.org/measure/poor-physical-health-days",
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Poor Physical Health Days is based on survey responses to the question: “Thinking about your physical health, which includes physical illness and injury, for how many days during the past 30 days was your physical health not good?” The value reported in the County Health Rankings is the average number of days a county’s adult respondents report that their physical health was not good. The measure is age-adjusted to the 2000 US population."
+            },
+            "inactive": {
+                "label": "% Physically Inactive",
+                "type": "percentage",
+                "title": "Physical inactivity",
+                "url": "http://www.countyhealthrankings.org/measure/physical-inactivity",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Physical Inactivity is the percentage of adults age 20 and over reporting no leisure-time physical activity. Examples of physical activities provided include running, calisthenics, golf, gardening, or walking for exercise."
+            },
+            "commute": {
+                "label": "% Long Commute/Drives Alone",
+                "type": "percentage",
+                "title": "Long Commute-Driving Alone",
+                "url": "http://www.countyhealthrankings.org/measure/long-commute-driving-alone",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Long Commute - Driving Alone is the percentage of commuters, among those who commute to work by car, truck, or van alone, who drive longer than 30 minutes to work each day."
             },
             "obese": {
                 "label": "% Obese",
@@ -357,31 +421,19 @@
         let height = 600;
 
         // let color = d3.scaleSequential(d3.interpolateOranges);
-        
-        let color = d3.scaleQuantize().range(d3.schemeOranges[9]);
 
-        let path = d3.geoPath();
+        let projection = d3.geoAlbersUsa()
+            .scale(width * 1.25)
+            .translate([width / 2, height / 2]);
+
+        let path = d3.geoPath()
+            // .projection(projection)
+        ;
 
         let svg = d3.select("svg")
+            .attr("viewBox", "0 0 " + width + " " + height) // responsive resizing
             .attr("width", width)
             .attr("height", height);
-
-        // create legend
-        // adapted from John A Guerra
-        // http://johnguerra.co/viz/USElections2016/
-        svg.append("g")
-            .attr("class", "legend")
-            .attr("transform","translate(" + (width - width * 3/4) + ",10)");
-
-        let legendLinear = d3.legendColor()
-            .shapeWidth(60)
-            .cells(6)
-            .orient("horizontal")
-            .labelOffset(5)
-            .ascending(true)
-            .labelAlign("end")
-            .shapePadding(2)
-            ;
 
         // create options for select element
         var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort()).enter();
@@ -407,8 +459,13 @@
             // stop spin.js loader
             spinner.stop();
 
+            // parse data
             let countyObj = {};
             data.forEach(function(d) {
+                d.pollution = +d['Average Daily PM2.5'];
+                d.violentcrime = +d['Violent Crime Rate'];
+                d.commute = +d['% Long Commute - Drives Alone'];
+                d.inactive = +d['% Physically Inactive'];
                 d.unemployment = +(d['% unemployment'] * 100).toPrecision(3);
                 d.fairpoor = +d['% Fair/Poor'];
                 d.smokers = +d['% Smokers'];
@@ -434,24 +491,6 @@
                 countyObj[d.FIPS] = d;
             });
 
-            let group = svg.append("g")
-                .attr("class", "counties");
-
-            let countyPathEnter = group.selectAll("path")
-                .data(topojson.feature(us, us.objects.counties).features)
-                .enter()
-
-            let countyPathUpdate = countyPathEnter.append("path");
-
-            let statePathUpdate = svg.append("path")
-                .datum(topojson.mesh(us, us.objects.states, function(a, b) {
-                    return a !== b;
-                }));
-
-            statePathUpdate
-                .attr("class", "states")
-                .attr("d", path);
-
             function renderMap() {
 
                 let extent = d3.extent(data, function(d) {
@@ -464,23 +503,24 @@
                 legendLinear
                     .labelFormat(function(d) {
                         let value;
-                        if(cols[measure].type == 'percentage') {
-                            value = d3.format(".0%")(d/100);
-                        } else {
+                        if (cols[measure].type == 'percentage') {
+                            value = d3.format(".0%")(d / 100);
+                        }
+                        else {
                             value = d3.format(".0f")(d);
                         }
                         return value;
                     })
                     // .title(cols[measure].label)
                     .scale(color);
-                    
+
                 svg.select(".legend")
                     .call(legendLinear);
 
                 countyPathUpdate
                     .transition()
                     .duration(1000)
-                    .attr("fill", function(d) {
+                    .style("fill", function(d) {
                         let county = countyObj[d.id];
                         if (county)
                             return color(county[measure]);
@@ -489,9 +529,38 @@
                             console.log(d.id + " Not found" + " errors = " + countMissing);
                             return color(0);
                         }
-                    })
-                    .attr("d", path);
+                    });
 
+            }
+
+            // When clicked, zoom in
+            function clicked(d) {
+                var x, y, k;
+
+                // Compute centroid of the selected path
+                if (d && centered !== d) {
+                    // if (d) {
+                    var centroid = path.centroid(d);
+                    x = centroid[0];
+                    y = centroid[1];
+                    // k = zoom.scaleExtent()[1];
+                    k = 10;
+                    centered = d;
+                }
+                else {
+                    x = width / 2;
+                    y = height / 2;
+                    k = 1;
+                    centered = null;
+                }
+
+                // Manually Zoom
+                svg.transition()
+                    .duration(750)
+                    .call(zoom.transform, d3.zoomIdentity
+                        .translate(width / 2, height / 2)
+                        .scale(k)
+                        .translate(-x, -y));
             }
 
             function renderText() {
@@ -518,7 +587,7 @@
                     if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
                         let d = d3.select(e.target).data()[0];
                         let content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + countyObj[d.id][measure];
-                        showDetail(e, content)
+                        showDetail(e, content);
                     }
                 });
 
@@ -526,12 +595,78 @@
                     if (e.target.nodeName == 'path') hideDetail();
                 });
             }
-            
+
+            function zoomed() {
+                console.log(d3.event.transform);
+                group.attr("transform", d3.event.transform);
+                group.select(".nation").style("stroke-width", 0.5 / d3.event.scale + "px");
+                group.select(".states").style("stroke-width", 1 / d3.event.scale + "px");
+                group.select(".counties").style("stroke-width", 0.1 / d3.event.scale + "px");
+            }
+
+            let color = d3.scaleQuantize().range(d3.schemeOranges[9]);
+
+            svg.append("rect")
+                .attr("class", "background")
+                .attr("width", width)
+                .attr("height", height);
+
+            let zoom = d3.zoom()
+                .scaleExtent([1, 15])
+                .on("zoom", zoomed);
+
+            svg.style("pointer-events", "all")
+                .call(zoom);
+
+            let group = svg.append("g");
+
+            let centered;
+
+            group.append("path")
+                .datum(topojson.feature(us, us.objects.nation))
+                .attr("class", "nation")
+                .attr("d", path)
+                .style("stroke-width", "0.5px");
+
+            let countyPathEnter = group.selectAll("path")
+                .data(topojson.feature(us, us.objects.counties).features)
+                .enter();
+
+            group.append("path")
+                .datum(topojson.mesh(us, us.objects.states, function(a, b) {
+                    return a !== b;
+                }))
+                .attr("class", "states")
+                .attr("d", path)
+                .style("stroke-width", "1px");
+
+            let countyPathUpdate = countyPathEnter
+                .append('path')
+                .attr("class", "counties")
+                .attr("d", path)
+                .style("stroke-width", "0.1px")
+                .on("click", clicked);
+
+            // create legend
+            // adapted from John A Guerra
+            // http://johnguerra.co/viz/USElections2016/
+            svg.append("g")
+                .attr("class", "legend")
+                .attr("transform", "translate(" + (width - width * 3 / 4) + ",10)");
+
+            let legendLinear = d3.legendColor()
+                .shapeWidth(60)
+                .cells(6)
+                .orient("horizontal")
+                .labelOffset(5)
+                .ascending(true)
+                .labelAlign("end")
+                .shapePadding(2);
+
             renderMap();
             renderText();
             bindHover();
-            // setResponsiveSVG(d3);
-            
+
             measureSelect.on('change', function(d) {
                 measure = this.value;
                 renderMap();
@@ -604,7 +739,8 @@
         }
 
         d3.queue()
-            .defer(d3.json, "https://d3js.org/us-10m.v1.json")
+            // .defer(d3.json, "https://d3js.org/us-10m.v1.json")
+            .defer(d3.json, "https://unpkg.com/us-atlas@1/us/10m.json")
             .defer(d3.csv, "https://raw.githubusercontent.com/tonmcg/us-presidential-election-results/master/public/data/chr.csv")
             .await(createMap);
     </script>
