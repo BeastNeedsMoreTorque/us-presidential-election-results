@@ -106,7 +106,7 @@
     <div class="container">
         <div class="row">
             <div class="col-xs-12 col-md-12">
-                <div class="page-header">
+                <div id="title" class="page-header">
                     <h2>3,115 Americas <small>Exploring U.S. County Health During the 2016 Presidential Election</small></h2>
                 </div>
             </div>
@@ -141,7 +141,8 @@
         <div class="row">
             <div class="col-xs-12 col-md-12">
                 <footer>
-                    <span>Analysis and visualizations by Scott Gregoire, Nick Heitzman, and Tony McGovern</span>
+                    <span>Visualization by Tony McGovern<br>
+                    Analysis by Scott Gregoire and Nick Heitzman</span>
                 </footer>
             </div>
         </div>
@@ -464,7 +465,7 @@
             .attr("height", height);
 
         // create options for select element
-        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort()).enter();
+        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort(function(a,b) { return b - a; })).enter();
 
         var selectUpdate = selectEnter.append('option');
 
@@ -481,6 +482,8 @@
         // counter for missing counties (usually in Alaska)
         let countMissing = 0;
 
+        let countyObj = {};
+
         function createMap(error, us, data) {
 
             if (error) throw error;
@@ -489,7 +492,6 @@
             spinner.stop();
 
             // parse data
-            let countyObj = {};
             data.forEach(function(d) {
                 d.population = +d['Population'];
                 d.pollution = +d['Average Daily PM2.5'];
