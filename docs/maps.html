@@ -298,6 +298,15 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Physical Inactivity is the percentage of adults age 20 and over reporting no leisure-time physical activity. Examples of physical activities provided include running, calisthenics, golf, gardening, or walking for exercise."
             },
+            "householdincome": {
+                "label": "Household Income",
+                "type": "number",
+                "format": "$.2s",
+                "title": "Median household income",
+                "url": "http://www.countyhealthrankings.org/measure/median-household-income",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Median Household Income is the income where half of households in a county earn more and half of households earn less."
+            },
             "commute": {
                 "label": "% Long Commute/Drives Alone",
                 "type": "percentage",
@@ -511,6 +520,7 @@
 
             // parse data
             data.forEach(function(d) {
+                d.householdincome = +d['Household Income'];
                 d.segregation = +d['Black/White Segregation index'];
                 d.overdose = +d['Drug Overdose Mortality Rate'];
                 d.population = +d['Population'];
