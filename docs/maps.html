@@ -307,6 +307,24 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Long Commute - Driving Alone is the percentage of commuters, among those who commute to work by car, truck, or van alone, who drive longer than 30 minutes to work each day."
             },
+            "segregation": {
+                "label": "Black/White Segregation index",
+                "type": "number",
+                "format": ",.1f",
+                "title": "Residential segregation - black/white",
+                "url": "http://www.countyhealthrankings.org/measure/residential-segregation-blackwhite",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Racial/ethnic residential segregation refers to the degree to which two or more groups live separately from one another in a geographic area. The index of dissimilarity is a demographic measure of the evenness with which two groups (black and white residents, in this case) are distributed across the component geographic areas (census tracts, in this case) that make up a larger area (counties, in this case). The index score can be interpreted as the percentage of either black or white residents that would have to move to different geographic areas in order to produce a distribution that matches that of the larger area."
+            },
+            "overdose": {
+                "label": "Drug Overdose Mortality Rate",
+                "type": "number",
+                "format": ",.1f",
+                "title": "Drug overdose deaths",
+                "url": "http://www.countyhealthrankings.org/measure/drug-overdose-deaths",
+                "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
+                "description": "Drug Overdose Deaths are the number of deaths due to drug poisoning per 100,000 population. ICD-10 codes used include X40-X44, X60-X64, X85, and Y10-Y14. These codes cover accidental, intentional, and undetermined poisoning by and exposure to: 1) nonopioid analgesics, antipyretics and antirheumatics, 2) antiepileptic, sedative-hypnotic, antiparkinsonism and psychotropic drugs, not elsewhere classified, 3) narcotics and psychodysleptics [hallucinogens], not elsewhere classified, 4) other drugs acting on the autonomic nervous system, and 5) other and unspecified drugs, medicaments and biological substances."
+            },
             "obese": {
                 "label": "% Obese",
                 "type": "percentage",
@@ -493,6 +511,8 @@
 
             // parse data
             data.forEach(function(d) {
+                d.segregation = +d['Black/White Segregation index'];
+                d.overdose = +d['Drug Overdose Mortality Rate'];
                 d.population = +d['Population'];
                 d.pollution = +d['Average Daily PM2.5'];
                 d.violentcrime = +d['Violent Crime Rate'];
