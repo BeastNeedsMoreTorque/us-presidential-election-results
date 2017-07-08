@@ -152,7 +152,7 @@
     <script src="https://d3js.org/d3.v4.min.js" type="text/javascript"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/topojson-client@3" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.11.0/d3-legend.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.11.0/d3-legend.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
     <script defer type="text/javascript">
@@ -163,6 +163,15 @@
 
         // define data and its attributes
         const cols = {
+            "election": {
+                "label": "Election Win Rate",
+                "type": "percentage",
+                "format": ".1%",
+                "title": "2016 Presidential Election Results",
+                "url": "https://github.com/tonmcg/County_Level_Election_Results_12-16",
+                "source": "Tony McGovern GitHub Repo",
+                "description": "Results of the 2016 Presidential General Election."
+            },
             "pcprate": {
                 "label": "PCP Rate",
                 "type": "number",
@@ -438,25 +447,6 @@
             className: 'spinner', // The CSS class to assign to the spinner
         };
 
-        // number formats
-        function formatAbbreviation(x) {
-            var v = Math.abs(x);
-            return (v >= 0.9995e9 ? formatBillion : v >= 0.9995e6 ? formatMillion : formatThousand)(x);
-        }
-
-        // local formatting to get billions
-        // https://github.com/d3/d3/issues/2241
-        let formatNumber = d3.format(".1f"),
-            formatBillion = function(x) {
-                return formatNumber(x / 1e9) + "B";
-            },
-            formatMillion = function(x) {
-                return formatNumber(x / 1e6) + "M";
-            },
-            formatThousand = function(x) {
-                return formatNumber(x / 1e3) + "k";
-            };
-
         // create spinner
         let target = d3.select("body").node();
 
@@ -486,6 +476,17 @@
         let path = d3.geoPath()
             // .projection(projection)
         ;
+
+        // use Susie Lu's d3-legend plugin
+        // http://d3-legend.susielu.com/
+        let d3legend = d3.legendColor()
+            .shapeWidth(width / 10)
+            .cells(9)
+            .orient("horizontal")
+            .labelOffset(3)
+            .ascending(true)
+            .labelAlign("middle")
+            .shapePadding(2);
 
         let svg = d3.select("svg")
             .attr("width", width)
@@ -520,6 +521,7 @@
 
             // parse data
             data.forEach(function(d) {
+                d.election = +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
                 d.householdincome = +d['Household Income'];
                 d.segregation = +d['Black/White Segregation index'];
                 d.overdose = +d['Drug Overdose Mortality Rate'];
@@ -561,11 +563,12 @@
                 let extent = d3.extent(data, function(d) {
                     return countyObj[d.FIPS][measure];
                 });
-
+                
+                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : d3.interpolateOranges);
+                // let color = measure == 'election' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
                 color.domain([extent[0], extent[1]]);
-
-                // update legend
-                legend
+                
+                d3legend
                     .labelFormat(function(d) {
                         let value;
                         
@@ -575,13 +578,21 @@
                         else {
                             value = d;
                         }
-                        return d3.format(cols[measure].format)(value);
+                        return d3.format(cols[measure].format)(Math.abs(value));
                     })
-                    // .title(cols[measure].label)
+                    .title(cols[measure].label)
                     .scale(color);
 
-                svg.select(".legend")
-                    .call(legend);
+                // if legend already exists, remove and create again
+                svg.select('.legend').remove();
+                
+                // create legend
+                let legend = svg.append("g")
+                    .attr("class", "legend")
+                    .attr("transform", "translate(" + (width / 24) + "," + (height * 6 / 7) + ")");
+
+                legend
+                    .call(d3legend);
 
                 countyPathUpdate
                     .transition()
@@ -606,7 +617,7 @@
                     if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
                         let d = d3.select(e.target).data()[0];
                         let value = cols[measure].type == 'percentage' ? countyObj[d.id][measure] / 100 : countyObj[d.id][measure];
-                        let content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(value);
+                        let content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
                         showDetail(e, content);
                     }
                 });
@@ -654,8 +665,6 @@
                         .translate(-x, -y));
             }
 
-            let color = d3.scaleQuantize().range(d3.schemeOranges[9]);
-
             // create background box for zoom
             svg.append("rect")
                 .attr("class", "background")
@@ -695,23 +704,7 @@
                 .attr("d", path)
                 .style("stroke-width", "0.1px")
                 .on("click", clicked);
-
-            // create legend
-            // use Susie Lu's d3-legend plugin
-            // http://d3-legend.susielu.com/
-            svg.append("g")
-                .attr("class", "legend")
-                .attr("transform", "translate(" + (width / 24) + "," + (height * 6 / 7) + ")");
-
-            let legend = d3.legendColor()
-                .shapeWidth(width / 10)
-                .cells(6)
-                .orient("horizontal")
-                .labelOffset(3)
-                .ascending(true)
-                .labelAlign("middle")
-                .shapePadding(2);
-
+                
             renderMap();
             renderText();
             bindHover();
