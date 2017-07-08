@@ -564,7 +564,7 @@
                     return countyObj[d.FIPS][measure];
                 });
                 
-                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : d3.interpolateOranges);
+                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : measure == 'unemployment' ? d3.interpolateBlues : d3.interpolateOranges);
                 // let color = measure == 'election' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
                 color.domain([extent[0], extent[1]]);
                 
