@@ -335,6 +335,15 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Racial/ethnic residential segregation refers to the degree to which two or more groups live separately from one another in a geographic area. The index of dissimilarity is a demographic measure of the evenness with which two groups (black and white residents, in this case) are distributed across the component geographic areas (census tracts, in this case) that make up a larger area (counties, in this case). The index score can be interpreted as the percentage of either black or white residents that would have to move to different geographic areas in order to produce a distribution that matches that of the larger area."
             },
+            "sunlight": {
+                "label": "Average Daily Sunlight",
+                "type": "number",
+                "format": ",.2f",
+                "title": "Daily Sunlight (KJ/m²) (1979-2011)",
+                "url": "https://wonder.cdc.gov/NASA-INSOLAR.html",
+                "source": "North America Land Data Assimilation System (NLDAS)",
+                "description": "The North America Land Data Assimilation System (NLDAS) Daily Sunlight data available on CDC WONDER are county-level daily sunlight (insolation or solar radiation) observations spanning the years 1979-2011. Reported measures are the average daily insolation, reported in kilojoules per square meter (KJ/m2), the number of observations, and the range for the daily insolation values."
+            },
             "overdose": {
                 "label": "Drug Overdose Mortality Rate",
                 "type": "number",
@@ -508,9 +517,6 @@
             }
         });
 
-        // counter for missing counties (usually in Alaska)
-        let countMissing = 0;
-
         let countyObj = {};
 
         function createMap(error, us, data) {
@@ -522,7 +528,8 @@
 
             // parse data
             data.forEach(function(d) {
-                d.election = +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
+                d.sunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
+                d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
                 d.householdincome = +d['Household Income'];
                 d.segregation = +d['Black/White Segregation index'];
                 d.overdose = +d['Drug Overdose Mortality Rate'];
@@ -561,13 +568,16 @@
             // render map colors based on data
             function renderMap() {
 
+                // counter for missing counties (usually in Alaska)
+                let countMissing = 0;
+
                 let extent = d3.extent(data, function(d) {
                     return countyObj[d.FIPS][measure];
                 });
                 
-                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : d3.interpolateOranges);
+                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : measure == 'sunlight' ? d3.interpolateRdYlBu : d3.interpolateOranges);
                 // let color = measure == 'election' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
-                color.domain([extent[0], extent[1]]);
+                color.domain(measure == 'sunlight' ? [extent[1], extent[0]] : [extent[0], extent[1]]);
                 
                 d3legend
                     .labelFormat(function(d) {
@@ -600,12 +610,15 @@
                     .duration(1000)
                     .style("fill", function(d) {
                         let county = countyObj[d.id];
-                        if (county)
+                        if (county && county[measure] === null) {
+                            console.log("FIPS Code: " + d.id + " " + countyObj[d.id]['County'] + ", " + countyObj[d.id]['State'] + " does not have data");
+                            return '#ccc';
+                        } else if (county) {
                             return color(county[measure]);
-                        else {
+                        } else {
                             countMissing++;
-                            console.log(d.id + " Not found" + " errors = " + countMissing);
-                            return color(0);
+                            console.log("FIPS Code: " + d.id + " not found. Error #" + countMissing);
+                            return '#ccc';
                         }
                     });
 
@@ -617,8 +630,15 @@
 
                     if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
                         let d = d3.select(e.target).data()[0];
-                        let value = cols[measure].type == 'percentage' ? countyObj[d.id][measure] / 100 : countyObj[d.id][measure];
-                        let content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
+                        let value = countyObj[d.id][measure];
+                        let content = '';
+                        if (value === null) {
+                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'No data';
+                        } else {
+                            value = cols[measure].type == 'percentage' ? value / 100 : value;
+                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
+                        }
+                        
                         showDetail(e, content);
                     }
                 });
