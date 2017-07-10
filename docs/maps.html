@@ -191,7 +191,7 @@
                 "title": "Population",
                 "latestyear": "2015",
                 "url": "https://www2.census.gov/programs-surveys/popest/datasets/2010-2016/counties/totals/",
-                "source": "United States Census",
+                "source": "U.S. Census Bureau",
                 "description": "Population estimates totals provided by the Census Bureau and are as of 2016"
             },
             "pollution": {
@@ -215,7 +215,7 @@
                 "description": "Mental Health Providers is the ratio of the county population to the number of mental health providers including psychiatrists, psychologists, licensed clinical social workers, counselors, marriage and family therapists, mental health providers that treat alcohol and other drug abuse, and advanced practice nurses specializing in mental health care. In 2015, marriage and family therapists and mental health providers that treat alcohol and other drug abuse were added to this measure."
             },
             "unemployment": {
-                "label": "% Unemployment",
+                "label": "% Unemployed",
                 "type": "percentage",
                 "format": ".1%",
                 "title": "Unemployment rate",
@@ -231,7 +231,7 @@
                 "title": "Uninsured",
                 "latestyear": "2015",
                 "url": "https://www.census.gov/did/www/sahie/",
-                "source": "US Census, Small Area Health Insurance Estimates (SAHIE)",
+                "source": "U.S. Census Bureau, Small Area Health Insurance Estimates (SAHIE)",
                 "description": "Uninsured is the percentage of the population under age 65 that has no health insurance coverage. The Small Area Health Insurance Estimates uses the American Community Survey (ACS) definition of insured"
             },
             "smokers": {
@@ -561,36 +561,36 @@
             data.forEach(function(d) {
                 d.sunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
                 d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
-                d.householdincome = +d['Household Income'];
-                d.segregation = +d['Black/White Segregation index'];
-                d.overdose = +d['Drug Overdose Mortality Rate'];
-                d.population = +d['Population'];
-                d.pollution = +d['Average Daily PM2.5'];
-                d.violentcrime = +d['Violent Crime Rate'];
-                d.commute = +d['% Long Commute - Drives Alone'];
-                d.inactive = +d['% Physically Inactive'];
-                d.unemployment = +(d['% unemployment'] * 100).toPrecision(3);
-                d.fairpoor = +d['% Fair/Poor'];
-                d.smokers = +d['% Smokers'];
-                d.singleparent = +d['% Single-Parent Households'];
-                d.excessdrink = +d['% Excessive Drinking'];
-                d.income = +d['Income Ratio'];
-                d.somecollege = +d['% Some College'];
-                d.mentalhealth = +d['Mentally Unhealthy Days'];
-                d.physicalhealth = +d['Physically Unhealthy Days'];
-                d.chlamydia = +d['Chlamydia Rate']; // new cases per 100,000
-                d.association = +d['Association Rate']; // number of associations per 10,000 population
-                d.uninsured = +d['% Uninsured'];
-                d.access = +d['% With Access'];
-                d.teenbirth = +d['Teen Birth Rate']; // number of births per 1,000 female population, ages 15-19
-                d.housingproblems = +d['% Severe Housing Problems'];
-                d.diabetes = 100 - +d['% Receiving HbA1c'];
-                d.providers = +d['Providers'];
-                d.mhprate = +d['MHP Rate'];
-                d.pcprate = +d['PCP Rate'];
-                d.dentist = +d['Dentist Rate'];
-                d.obese = +d['% Obese'];
-                d.foodenvironment = +(10 - +d['Food Environment Index']).toPrecision(3);
+                d.householdincome = +d['Household Income'] || null;
+                d.segregation = +d['Black/White Segregation index'] || null;
+                d.overdose = +d['Drug Overdose Mortality Rate'] || null;
+                d.population = +d['Population'] || null;
+                d.pollution = +d['Average Daily PM2.5'] || null;
+                d.violentcrime = +d['Violent Crime Rate'] || null;
+                d.commute = +d['% Long Commute - Drives Alone'] || null;
+                d.inactive = +d['% Physically Inactive'] || null;
+                d.unemployment = +(d['% Unemployed']) || null;
+                d.fairpoor = +d['% Fair/Poor'] || null;
+                d.smokers = +d['% Smokers'] || null;
+                d.singleparent = +d['% Single-Parent Households'] || null;
+                d.excessdrink = +d['% Excessive Drinking'] || null;
+                d.income = +d['Income Ratio'] || null;
+                d.somecollege = +d['% Some College'] || null;
+                d.mentalhealth = +d['Mentally Unhealthy Days'] || null;
+                d.physicalhealth = +d['Physically Unhealthy Days'] || null;
+                d.chlamydia = +d['Chlamydia Rate'] || null; // new cases per 100,000
+                d.association = +d['Association Rate'] || null; // number of associations per 10,000 population
+                d.uninsured = +d['% Uninsured'] || null;
+                d.access = +d['% With Access'] || null;
+                d.teenbirth = +d['Teen Birth Rate'] || null; // number of births per 1,000 female population, ages 15-19
+                d.housingproblems = +d['% Severe Housing Problems'] || null;
+                d.diabetes = (100 - +d['% Receiving HbA1c']) || null;
+                d.providers = +d['Providers'] || null;
+                d.mhprate = +d['MHP Rate'] || null;
+                d.pcprate = +d['PCP Rate'] || null;
+                d.dentist = +d['Dentist Rate'] || null;
+                d.obese = +d['% Obese'] || null;
+                d.foodenvironment = +(10 - +d['Food Environment Index']).toPrecision(3) || null;
                 countyObj[d.FIPS] = d;
             });
 
@@ -642,7 +642,7 @@
                     .style("fill", function(d) {
                         let county = countyObj[d.id];
                         if (county && county[measure] === null) {
-                            console.log("FIPS Code: " + d.id + " " + countyObj[d.id]['County'] + ", " + countyObj[d.id]['State'] + " does not have data");
+                            console.log("FIPS Code: " + d.id + " " + countyObj[d.id]['NAME'] + " does not have data");
                             return '#ccc';
                         } else if (county) {
                             return color(county[measure]);
@@ -664,10 +664,10 @@
                         let value = countyObj[d.id][measure];
                         let content = '';
                         if (value === null) {
-                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'No data';
+                            content = countyObj[d.id].NAME + '<br>' + 'No data';
                         } else {
                             value = cols[measure].type == 'percentage' ? value / 100 : value;
-                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
+                            content = countyObj[d.id].NAME + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
                         }
                         
                         showDetail(e, content);
