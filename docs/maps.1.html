@@ -11,9 +11,9 @@
         body {
             font-family: 'Lora', serif;
         }
-        
+
         .nation,
-        .states,
+        .states, 
         .counties {
             fill: none;
             stroke: #000000;
@@ -173,26 +173,6 @@
                 "url": "https://github.com/tonmcg/County_Level_Election_Results_12-16",
                 "source": "Tony McGovern GitHub Repo",
                 "description": "Results of the 2016 Presidential General Election."
-            },
-            "naturalincrease": {
-                "label": "Natural Increase Rate",
-                "type": "number",
-                "format": ",.0f",
-                "title": "Rate of Natural Increase",
-                "latestyear": "2016",
-                "url": "https://www.census.gov/data/tables/2016/demo/popest/counties-total.html",
-                "source": "U.S. Census Bureau, Population Division",
-                "description": "Births minus deaths. The rate of natural increase expresses natural increase during a specified time period as a proportion of an area's population at the midpoint of the time period. Rates are expressed per 1,000 population."
-            },
-            "netmigration": {
-                "label": "Net Migration Rate",
-                "type": "number",
-                "format": ",.0f",
-                "title": "Net Migration Rate",
-                "latestyear": "2016",
-                "url": "https://www.census.gov/data/tables/2016/demo/popest/counties-total.html",
-                "source": "U.S. Census Bureau, Population Division",
-                "description": "The difference between the number of migrants entering and those leaving a country in a year, per 1,000 midyear population. May also be expressed in percent. A positive figure is known as a net immigration rate and a negative figure as a net emigration rate."
             },
             "pcprate": {
                 "label": "PCP Rate",
@@ -535,8 +515,7 @@
             .translate([width / 2, height / 2]);
 
         let path = d3.geoPath()
-            .projection(null)
-        ;
+            .projection(null);
 
         // use Susie Lu's d3-legend plugin
         // http://d3-legend.susielu.com/
@@ -554,7 +533,9 @@
             .attr("height", height);
 
         // create options for select element
-        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort(function(a,b) { return b - a; })).enter();
+        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort(function(a, b) {
+            return b - a;
+        })).enter();
 
         var selectUpdate = selectEnter.append('option');
 
@@ -579,8 +560,6 @@
 
             // parse data
             data.forEach(function(d) {
-                d.naturalincrease = +d['Natural Increase Rate'];
-                d.netmigration = +d['Net Migration Rate'];
                 d.sunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
                 d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
                 d.householdincome = +d['Household Income'] || null;
@@ -627,29 +606,29 @@
                 let extent = d3.extent(data, function(d) {
                     return countyObj[d.FIPS][measure];
                 });
-                
-                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : measure == 'sunlight' ? d3.interpolateRdYlBu : measure == 'naturalincrease' ? d3. interpolatePiYG : d3.interpolateOranges);
+
+                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : measure == 'sunlight' ? d3.interpolateRdYlBu : d3.interpolateOranges);
                 // let color = measure == 'election' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
                 color.domain(measure == 'sunlight' ? [extent[1], extent[0]] : [extent[0], extent[1]]);
-                
+
                 d3legend
                     .labelFormat(function(d) {
                         let value;
-                        
+
                         if (cols[measure].type == 'percentage') {
                             value = d / 100;
                         }
                         else {
                             value = d;
                         }
-                        return d3.format(cols[measure].format)(value);
+                        return d3.format(cols[measure].format)(Math.abs(value));
                     })
                     .title(cols[measure].label)
                     .scale(color);
 
                 // if legend already exists, remove and create again
                 svg.select('.legend').remove();
-                
+
                 // create legend
                 let legend = svg.append("g")
                     .attr("class", "legend")
@@ -666,9 +645,11 @@
                         if (county && county[measure] === null) {
                             console.log("FIPS Code: " + d.id + " " + countyObj[d.id]['NAME'] + " does not have data");
                             return '#ccc';
-                        } else if (county) {
+                        }
+                        else if (county) {
                             return color(county[measure]);
-                        } else {
+                        }
+                        else {
                             countMissing++;
                             console.log("FIPS Code: " + d.id + " not found. Error #" + countMissing);
                             return '#ccc';
@@ -677,36 +658,28 @@
 
             }
 
-            // define mouseover and mouseout events
-            function bindHover() {
-                document.body.addEventListener('mousemove', function(e) {
+            // define mouseover event
+            function getDetail() {
+                let d = d3.select(this).data()[0];
+                let value = countyObj[d.id][measure];
+                let content = '';
+                if (value === null) {
+                    content = countyObj[d.id].NAME + '<br>' + 'No data';
+                }
+                else {
+                    value = cols[measure].type == 'percentage' ? value / 100 : value;
+                    content = countyObj[d.id].NAME + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
+                }
 
-                    if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
-                        let d = d3.select(e.target).data()[0];
-                        let value = countyObj[d.id][measure];
-                        let content = '';
-                        if (value === null) {
-                            content = countyObj[d.id].NAME + '<br>' + 'No data';
-                        } else {
-                            value = cols[measure].type == 'percentage' ? value / 100 : value;
-                            content = countyObj[d.id].NAME + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(value);
-                        }
-                        
-                        showDetail(e, content);
-                    }
-                });
-
-                document.body.addEventListener('mouseout', function(e) {
-                    if (e.target.nodeName == 'path') hideDetail();
-                });
+                showDetail(d3.event, content);
             }
 
             // define zoom function
             function zoomed() {
                 group.attr("transform", d3.event.transform);
-                group.select(".nation").style("stroke-width", 0.5 / d3.event.scale + "px");
-                group.select(".states").style("stroke-width", 1 / d3.event.scale + "px");
-                group.select(".counties").style("stroke-width", 0.1 / d3.event.scale + "px");
+                group.select(".nation").style("stroke-width", 1.5 / d3.event.scale + "px");
+                group.select(".states").style("stroke-width", 1.5 / d3.event.scale + "px");
+                group.select(".counties").style("stroke-width", 0.05 / d3.event.scale + "px");
             }
 
             // When clicked, zoom in
@@ -752,36 +725,40 @@
             svg.style("pointer-events", "all")
                 .call(zoom);
 
-            let group = svg.append("g");
-
-            group.append("path")
-                .datum(topojson.feature(us, us.objects.nation))
-                .attr("class", "nation")
-                .attr("d", path)
-                .style("stroke-width", "0.5px");
+            let group = svg.append("g")
+                .attr("class", "counties");
 
             group.append("path")
                 .datum(topojson.mesh(us, us.objects.states, function(a, b) {
-                    return a !== b;
+                    return a.id !== b.id;
                 }))
                 .attr("class", "states")
                 .attr("d", path)
                 .style("stroke-width", "1px");
 
+            group.append("path")
+                .datum(topojson.mesh(us, us.objects.nation, function(a, b) {
+                    return a !== b;
+                }))
+                .attr("class", "nation")
+                .attr("d", path)
+                .style("stroke-width", "1px");
+
             let countyPathEnter = group.selectAll("path")
-                .data(topojson.feature(us, us.objects.counties).features)
+                .data(topojson.feature(us, us.objects.counties).features.filter(function(d) {
+                    return d.id in countyObj;
+                }))
                 .enter();
 
             let countyPathUpdate = countyPathEnter
-                .append('path')
-                .attr("class", "counties")
+                .append("path")
                 .attr("d", path)
-                .style("stroke-width", "0.1px")
-                .on("click", clicked);
-                
+                .style("stroke-width", "0.05px");
+
+            countyPathUpdate.on("click", clicked).on("mousemove", getDetail).on("mouseout", hideDetail);
+
             renderMap();
             renderText();
-            bindHover();
             setResponsiveSVG();
 
             measureSelect.on('change', function(d) {
@@ -878,15 +855,21 @@
             .await(createMap);
     </script>
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    
-      ga('create', 'UA-102235118-1', 'auto');
-      ga('send', 'pageview');
-    
-    </script>    
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-102235118-1', 'auto');
+        ga('send', 'pageview');
+    </script>
 </body>
 
 </html>
