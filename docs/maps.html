@@ -582,7 +582,8 @@
                 d.naturalincrease = +d['Natural Increase Rate'];
                 d.netmigration = +d['Net Migration Rate'];
                 d.sunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
-                d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
+                d.election = (+d['Democratic Votes'] - +d['GOP Votes'])/+d['Total Votes'] * 100;
+                // d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
                 d.householdincome = +d['Household Income'] || null;
                 d.segregation = +d['Black/White Segregation index'] || null;
                 d.overdose = +d['Drug Overdose Mortality Rate'] || null;
@@ -642,7 +643,7 @@
                         else {
                             value = d;
                         }
-                        return d3.format(cols[measure].format)(value);
+                        return d3.format(cols[measure].format)(Math.abs(value));
                     })
                     .title(cols[measure].label)
                     .scale(color);
@@ -664,7 +665,7 @@
                     .style("fill", function(d) {
                         let county = countyObj[d.id];
                         if (county && county[measure] === null) {
-                            console.log("FIPS Code: " + d.id + " " + countyObj[d.id]['NAME'] + " does not have data");
+                            console.log("FIPS Code: " + d.id + " " + countyObj[d.id].County + " does not have data");
                             return '#ccc';
                         } else if (county) {
                             return color(county[measure]);
@@ -686,10 +687,10 @@
                         let value = countyObj[d.id][measure];
                         let content = '';
                         if (value === null) {
-                            content = countyObj[d.id].NAME + '<br>' + 'No data';
+                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'No data';
                         } else {
                             value = cols[measure].type == 'percentage' ? value / 100 : value;
-                            content = countyObj[d.id].NAME + '<br>' + 'Voted for: ' + countyObj[d.id].election_result + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(value);
+                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id]['County Winner'] + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
                         }
                         
                         showDetail(e, content);
