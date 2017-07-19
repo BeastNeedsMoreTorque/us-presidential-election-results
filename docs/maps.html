@@ -737,10 +737,10 @@
                 .on("click", clicked)
                 .attr("d", path);
                 
-            group.selectAll(".states")
-                .data(topojson.feature(us, us.objects.states).features)
-                .enter()
-                .append('path')
+            group.append("path")
+                .datum(topojson.mesh(us, us.objects.states, function(a, b) {
+                    return a !== b;
+                }))
                 .attr("class", "state-border")
                 .attr("d", path);
 
@@ -787,8 +787,8 @@
                     if (value === null) {
                         content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'No data';
                     } else {
-                        value = cols[measure].type == 'percentage' ? value / 100 : value;
-                        content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id]['County Winner'] + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
+                        value = cols[measure].type == 'percentage' ? measure == 'countywinrate' ? Math.abs(value/100) : (value / 100): value;
+                        content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id]['County Winner'] + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(value);
                     }
                     
                     showDetail(e, content);
