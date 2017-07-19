@@ -165,11 +165,11 @@
         // define data and its attributes
         const cols = {
             "election": {
-                "label": "Election Win Rate",
+                "label": "County Win Rate",
                 "type": "percentage",
                 "format": ".1%",
                 "title": "2016 Presidential Election Results",
-                "latestyear": "2015",
+                "latestyear": "2016",
                 "url": "https://github.com/tonmcg/County_Level_Election_Results_12-16",
                 "source": "Tony McGovern GitHub Repo",
                 "description": "Results of the 2016 Presidential General Election."
@@ -582,7 +582,7 @@
                 d.naturalincrease = +d['Natural Increase Rate'];
                 d.netmigration = +d['Net Migration Rate'];
                 d.sunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
-                d.election = (+d['Democratic Votes'] - +d['GOP Votes'])/+d['Total Votes'] * 100;
+                d.election = +(d['County Win Rate']* -1).toPrecision(3);
                 // d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
                 d.householdincome = +d['Household Income'] || null;
                 d.segregation = +d['Black/White Segregation index'] || null;
@@ -631,7 +631,7 @@
                 
                 let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : measure == 'sunlight' ? d3.interpolateRdYlBu : measure == 'naturalincrease' ? d3. interpolatePiYG : d3.interpolateOranges);
                 // let color = measure == 'election' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
-                color.domain(measure == 'sunlight' ? [extent[1], extent[0]] : [extent[0], extent[1]]);
+                color.domain(measure == 'sunlight' ? [extent[1], extent[0]] : measure == 'election' ? [-100,100] : [extent[0], extent[1]]);
                 
                 d3legend
                     .labelFormat(function(d) {
