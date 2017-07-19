@@ -12,18 +12,22 @@
             font-family: 'Lora', serif;
         }
         
+        .nation-border,
+        .state-border,
         .county-border {
             fill: none;
-            stroke-width: 0.1px;
             stroke: #000000;
-            pointer-events:all;
-            /*stroke-linejoin: round;*/
-            /*stroke-linecap: round;*/
         }
 
+        .county-border {
+            stroke-width: 0.1px;
+            pointer-events:all;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+        .nation-border,
         .state-border {
-            fill: none;
-            stroke: #000000;
             stroke-width: 0.5px;
             pointer-events:none;
         }
@@ -742,6 +746,11 @@
                     return a !== b;
                 }))
                 .attr("class", "state-border")
+                .attr("d", path);
+
+            group.append("path")
+                .datum(topojson.feature(us, us.objects.nation))
+                .attr("class", "nation-border")
                 .attr("d", path);
 
             renderText();
