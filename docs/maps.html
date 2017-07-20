@@ -12,13 +12,24 @@
             font-family: 'Lora', serif;
         }
         
-        .nation,
-        .states,
-        .counties {
+        .nation-border,
+        .state-border,
+        .county-border {
             fill: none;
             stroke: #000000;
+        }
+
+        .county-border {
+            stroke-width: 0.1px;
+            pointer-events:all;
             stroke-linejoin: round;
             stroke-linecap: round;
+        }
+
+        .nation-border,
+        .state-border {
+            stroke-width: 0.5px;
+            pointer-events:none;
         }
         
         .background {
@@ -154,8 +165,6 @@
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/topojson-client@3" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.11.0/d3-legend.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
     <script defer type="text/javascript">
         "use strict";
 
@@ -164,17 +173,17 @@
 
         // define data and its attributes
         const cols = {
-            "election": {
-                "label": "Election Win Rate",
+            "countywinrate": {
+                "label": "County Win Rate",
                 "type": "percentage",
                 "format": ".1%",
                 "title": "2016 Presidential Election Results",
-                "latestyear": "2015",
+                "latestyear": "2016",
                 "url": "https://github.com/tonmcg/County_Level_Election_Results_12-16",
                 "source": "Tony McGovern GitHub Repo",
                 "description": "Results of the 2016 Presidential General Election."
             },
-            "naturalincrease": {
+            "ratenaturalincrease": {
                 "label": "Natural Increase Rate",
                 "type": "number",
                 "format": ",.0f",
@@ -194,7 +203,7 @@
                 "source": "U.S. Census Bureau, Population Division",
                 "description": "The difference between the number of migrants entering and those leaving a country in a year, per 1,000 midyear population. May also be expressed in percent. A positive figure is known as a net immigration rate and a negative figure as a net emigration rate."
             },
-            "pcprate": {
+            "primarycare": {
                 "label": "PCP Rate",
                 "type": "number",
                 "format": ",.0f",
@@ -214,7 +223,7 @@
                 "source": "U.S. Census Bureau",
                 "description": "Population estimates totals provided by the Census Bureau and are as of 2016"
             },
-            "pollution": {
+            "averagepollution": {
                 "label": "Average Daily PM2.5",
                 "type": "number",
                 "format": ",.1f",
@@ -224,7 +233,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Particulate Matter is the average daily density of fine particulate matter in micrograms per cubic meter (PM2.5) in a county. Fine particulate matter is defined as particles of air pollutants with an aerodynamic diameter less than 2.5 micrometers. These particles can be directly emitted from sources such as forest fires, or they can form when gases emitted from power plants, industries and automobiles react in the air."
             },
-            "mhprate": {
+            "mentalhealth": {
                 "label": "MHP Rate",
                 "type": "number",
                 "format": ",.0f",
@@ -254,7 +263,7 @@
                 "source": "U.S. Census Bureau, Small Area Health Insurance Estimates (SAHIE)",
                 "description": "Uninsured is the percentage of the population under age 65 that has no health insurance coverage. The Small Area Health Insurance Estimates uses the American Community Survey (ACS) definition of insured"
             },
-            "smokers": {
+            "adultsmoking": {
                 "label": "% Smokers",
                 "type": "percentage",
                 "format": ".1%",
@@ -264,7 +273,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Adult Smoking is the percentage of the adult population that currently smokes every day or most days and has smoked at least 100 cigarettes in their lifetime."
             },
-            "singleparent": {
+            "childreninsingleparent": {
                 "label": "% Single-Parent Households",
                 "type": "percentage",
                 "format": ".0%",
@@ -274,7 +283,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Children in Single-Parent Households is the percentage of children in family households where the household is headed by a single parent (male or female head of household with no spouse present)."
             },
-            "fairpoor": {
+            "poorfair": {
                 "label": "% Fair Poor",
                 "type": "percentage",
                 "format": ".1%",
@@ -314,7 +323,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Some College is the percentage of the population ages 25-44 with some post-secondary education, such as enrollment in vocational/technical schools, junior colleges, or four-year colleges. It includes individuals who pursued education following high school but did not receive a degree."
             },
-            "mentalhealth": {
+            "poormentalhealth": {
                 "label": "Mentally Unhealthy Days",
                 "type": "number",
                 "format": ",.1f",
@@ -324,7 +333,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Poor Mental Health Days is based on survey responses to the question: “Thinking about your mental health, which includes stress, depression, and problems with emotions, for how many days during the past 30 days was your mental health not good?” The value reported in the County Health Rankings is the average number of days a county’s adult respondents report that their mental health was not good. The measure is age-adjusted to the 2000 US population."
             },
-            "physicalhealth": {
+            "poorphysicalhealth": {
                 "label": "Physically Unhealthy Days",
                 "type": "number",
                 "format": ",.1f",
@@ -334,7 +343,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Poor Physical Health Days is based on survey responses to the question: “Thinking about your physical health, which includes physical illness and injury, for how many days during the past 30 days was your physical health not good?” The value reported in the County Health Rankings is the average number of days a county’s adult respondents report that their physical health was not good. The measure is age-adjusted to the 2000 US population."
             },
-            "inactive": {
+            "physicallyinactive": {
                 "label": "% Physically Inactive",
                 "type": "percentage",
                 "format": ".1%",
@@ -344,7 +353,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Physical Inactivity is the percentage of adults age 20 and over reporting no leisure-time physical activity. Examples of physical activities provided include running, calisthenics, golf, gardening, or walking for exercise."
             },
-            "householdincome": {
+            "medianhouseholdincome": {
                 "label": "Household Income",
                 "type": "number",
                 "format": "$.2s",
@@ -354,7 +363,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Median Household Income is the income where half of households in a county earn more and half of households earn less."
             },
-            "commute": {
+            "longcommute": {
                 "label": "% Long Commute/Drives Alone",
                 "type": "percentage",
                 "format": ".1%",
@@ -364,7 +373,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Long Commute - Driving Alone is the percentage of commuters, among those who commute to work by car, truck, or van alone, who drive longer than 30 minutes to work each day."
             },
-            "segregation": {
+            "residentialsegregation": {
                 "label": "Black/White Segregation index",
                 "type": "number",
                 "format": ",.1f",
@@ -374,7 +383,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Racial/ethnic residential segregation refers to the degree to which two or more groups live separately from one another in a geographic area. The index of dissimilarity is a demographic measure of the evenness with which two groups (black and white residents, in this case) are distributed across the component geographic areas (census tracts, in this case) that make up a larger area (counties, in this case). The index score can be interpreted as the percentage of either black or white residents that would have to move to different geographic areas in order to produce a distribution that matches that of the larger area."
             },
-            "sunlight": {
+            "dailysunlight": {
                 "label": "Average Daily Sunlight",
                 "type": "number",
                 "format": ",.2f",
@@ -384,7 +393,7 @@
                 "source": "North America Land Data Assimilation System (NLDAS)",
                 "description": "The North America Land Data Assimilation System (NLDAS) Daily Sunlight data available on CDC WONDER are county-level daily sunlight (insolation or solar radiation) observations spanning the years 1979-2011. Reported measures are the average daily insolation, reported in kilojoules per square meter (KJ/m2), the number of observations, and the range for the daily insolation values."
             },
-            "overdose": {
+            "drugoverdose": {
                 "label": "Drug Overdose Mortality Rate",
                 "type": "number",
                 "format": ",.1f",
@@ -394,7 +403,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Drug Overdose Deaths are the number of deaths due to drug poisoning per 100,000 population. ICD-10 codes used include X40-X44, X60-X64, X85, and Y10-Y14. These codes cover accidental, intentional, and undetermined poisoning by and exposure to: 1) nonopioid analgesics, antipyretics and antirheumatics, 2) antiepileptic, sedative-hypnotic, antiparkinsonism and psychotropic drugs, not elsewhere classified, 3) narcotics and psychodysleptics [hallucinogens], not elsewhere classified, 4) other drugs acting on the autonomic nervous system, and 5) other and unspecified drugs, medicaments and biological substances."
             },
-            "obese": {
+            "obesity": {
                 "label": "% Obese",
                 "type": "percentage",
                 "format": ".1%",
@@ -424,7 +433,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Dentists are measured as the ratio of the county population to total dentists in the county."
             },
-            "association": {
+            "socialassociation": {
                 "label": "Association Rate",
                 "type": "number",
                 "format": ",.1f",
@@ -444,7 +453,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Teen Births are the number of births per 1,000 female population, ages 15-19."
             },
-            "excessdrink": {
+            "excessivedrink": {
                 "label": "% Excessive Drinking",
                 "type": "percentage",
                 "format": ".1%",
@@ -454,7 +463,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Excessive Drinking is the percentage of adults that report either binge drinking, defined as consuming more than 4 (women) or 5 (men) alcoholic beverages on a single occasion in the past 30 days, or heavy drinking, defined as drinking more than one (women) or 2 (men) drinks per day on average."
             },
-            "housingproblems": {
+            "severehousingproblems": {
                 "label": "% Severe Housing Problems",
                 "type": "percentage",
                 "format": ".1%",
@@ -464,7 +473,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Severe Housing Problems is the percentage of households with at least one or more of the following housing problems:\nhousing unit lacks complete kitchen facilities;\nhousing unit lacks complete plumbing facilities;\nhousehold is severely overcrowded; or\nhousehold is severely cost burdened.\nSevere overcrowding is defined as more than 1.5 persons per room. Severe cost burden is defined as monthly housing costs (including utilities) that exceed 50% of monthly income."
             },
-            "providers": {
+            "numberofproviders": {
                 "label": "Providers",
                 "type": "number",
                 "format": ",.0f",
@@ -484,7 +493,7 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Diabetes Monitoring is the percentage of diabetic fee-for-service Medicare patients ages 65-75 whose blood sugar control was not monitored in the past year using a test of their glycated hemoglobin (HbA1c) levels. Note: this differs from the original measure that reported the number of patients who had received testing in the last year."
             },
-            "chlamydia": {
+            "sexuallytransmitted": {
                 "label": "Chlamydia Rate",
                 "type": "number",
                 "format": ",.0f",
@@ -520,13 +529,6 @@
         // select element
         let measureSelect = d3.select('#dimensions');
 
-        let margins = {
-            right: 60,
-            left: 10,
-            top: 20,
-            bottom: 50
-        };
-
         let width = 960;
         let height = 720;
 
@@ -535,8 +537,7 @@
             .translate([width / 2, height / 2]);
 
         let path = d3.geoPath()
-            .projection(null)
-        ;
+            .projection(null);
 
         // use Susie Lu's d3-legend plugin
         // http://d3-legend.susielu.com/
@@ -554,7 +555,7 @@
             .attr("height", height);
 
         // create options for select element
-        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort(function(a,b) { return b - a; })).enter();
+        var selectEnter = measureSelect.selectAll('option').data(d3.keys(cols).sort()).enter();
 
         var selectUpdate = selectEnter.append('option');
 
@@ -579,40 +580,39 @@
 
             // parse data
             data.forEach(function(d) {
-                d.naturalincrease = +d['Natural Increase Rate'];
+                d.ratenaturalincrease = +d['Natural Increase Rate'];
                 d.netmigration = +d['Net Migration Rate'];
-                d.sunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
-                d.election = (+d['Democratic Votes'] - +d['GOP Votes'])/+d['Total Votes'] * 100;
-                // d.election = +d['Election Win Rate'] === 0 ? null : +(d['Election Win Rate'] * 100 * -1).toPrecision(3); // multiply by -1 to reverse the domain so that scaleQuantize return blue to red
-                d.householdincome = +d['Household Income'] || null;
-                d.segregation = +d['Black/White Segregation index'] || null;
-                d.overdose = +d['Drug Overdose Mortality Rate'] || null;
+                d.dailysunlight = +d['Avg Daily Sunlight (KJ/m²)'] === 0 ? null : +d['Avg Daily Sunlight (KJ/m²)'] || null;
+                d.countywinrate = +(d['County Win Rate'] * -1).toPrecision(3);
+                d.medianhouseholdincome = +d['Household Income'] || null;
+                d.residentialsegregation = +d['Black/White Segregation index'] || null;
+                d.drugoverdose = +d['Drug Overdose Mortality Rate'] || null;
                 d.population = +d['Population'] || null;
-                d.pollution = +d['Average Daily PM2.5'] || null;
+                d.averagepollution = +d['Average Daily PM2.5'] || null;
                 d.violentcrime = +d['Violent Crime Rate'] || null;
-                d.commute = +d['% Long Commute - Drives Alone'] || null;
-                d.inactive = +d['% Physically Inactive'] || null;
+                d.longcommute = +d['% Long Commute - Drives Alone'] || null;
+                d.physicallyinactive = +d['% Physically Inactive'] || null;
                 d.unemployment = +(d['% Unemployed']) || null;
-                d.fairpoor = +d['% Fair/Poor'] || null;
-                d.smokers = +d['% Smokers'] || null;
-                d.singleparent = +d['% Single-Parent Households'] || null;
-                d.excessdrink = +d['% Excessive Drinking'] || null;
+                d.poorfair = +d['% Fair/Poor'] || null;
+                d.adultsmoking = +d['% Smokers'] || null;
+                d.childreninsingleparent = +d['% Single-Parent Households'] || null;
+                d.excessivedrink = +d['% Excessive Drinking'] || null;
                 d.income = +d['Income Ratio'] || null;
                 d.somecollege = +d['% Some College'] || null;
-                d.mentalhealth = +d['Mentally Unhealthy Days'] || null;
-                d.physicalhealth = +d['Physically Unhealthy Days'] || null;
-                d.chlamydia = +d['Chlamydia Rate'] || null; // new cases per 100,000
-                d.association = +d['Association Rate'] || null; // number of associations per 10,000 population
+                d.poormentalhealth = +d['Mentally Unhealthy Days'] || null;
+                d.poorphysicalhealth = +d['Physically Unhealthy Days'] || null;
+                d.sexuallytransmitted = +d['Chlamydia Rate'] || null; // new cases per 100,000
+                d.socialassociation = +d['Association Rate'] || null; // number of associations per 10,000 population
                 d.uninsured = +d['% Uninsured'] || null;
                 d.access = +d['% With Access'] || null;
                 d.teenbirth = +d['Teen Birth Rate'] || null; // number of births per 1,000 female population, ages 15-19
-                d.housingproblems = +d['% Severe Housing Problems'] || null;
+                d.severehousingproblems = +d['% Severe Housing Problems'] || null;
                 d.diabetes = (100 - +d['% Receiving HbA1c']) || null;
-                d.providers = +d['Providers'] || null;
-                d.mhprate = +d['MHP Rate'] || null;
-                d.pcprate = +d['PCP Rate'] || null;
+                d.numberofproviders = +d['Providers'] || null;
+                d.mentalhealth = +d['MHP Rate'] || null;
+                d.primarycare = +d['PCP Rate'] || null;
                 d.dentist = +d['Dentist Rate'] || null;
-                d.obese = +d['% Obese'] || null;
+                d.obesity = +d['% Obese'] || null;
                 d.foodenvironment = +(10 - +d['Food Environment Index']).toPrecision(3) || null;
                 countyObj[d.FIPS] = d;
             });
@@ -628,29 +628,29 @@
                 let extent = d3.extent(data, function(d) {
                     return countyObj[d.FIPS][measure];
                 });
-                
-                let color = d3.scaleSequential().interpolator(measure == 'election' ? d3.interpolateRdBu : measure == 'sunlight' ? d3.interpolateRdYlBu : measure == 'naturalincrease' ? d3. interpolatePiYG : d3.interpolateOranges);
-                // let color = measure == 'election' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
-                color.domain(measure == 'sunlight' ? [extent[1], extent[0]] : [extent[0], extent[1]]);
-                
+
+                let color = d3.scaleSequential().interpolator(measure == 'countywinrate' ? d3.interpolateRdBu : measure == 'dailysunlight' ? d3.interpolateRdYlBu : measure == 'ratenaturalincrease' ? d3.interpolatePiYG : d3.interpolateOranges);
+                // let color = measure == 'countywinrate' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
+                color.domain(measure == 'dailysunlight' ? [extent[1], extent[0]] : measure == 'countywinrate' ? [-100, 100] : [extent[0], extent[1]]);
+
                 d3legend
                     .labelFormat(function(d) {
                         let value;
-                        
+
                         if (cols[measure].type == 'percentage') {
-                            value = d / 100;
+                            value = measure == 'countywinrate' ? Math.abs(d/100) : (d / 100);
                         }
                         else {
-                            value = d;
+                            value = measure == 'countywinrate' ? Math.abs(d) : d;
                         }
-                        return d3.format(cols[measure].format)(Math.abs(value));
+                        return d3.format(cols[measure].format)(value);
                     })
                     .title(cols[measure].label)
                     .scale(color);
 
                 // if legend already exists, remove and create again
                 svg.select('.legend').remove();
-                
+
                 // create legend
                 let legend = svg.append("g")
                     .attr("class", "legend")
@@ -659,7 +659,7 @@
                 legend
                     .call(d3legend);
 
-                countyPathUpdate
+                countyPath
                     .transition()
                     .duration(1000)
                     .style("fill", function(d) {
@@ -667,47 +667,25 @@
                         if (county && county[measure] === null) {
                             console.log("FIPS Code: " + d.id + " " + countyObj[d.id].County + " does not have data");
                             return '#ccc';
-                        } else if (county) {
+                        }
+                        else if (county) {
                             return color(county[measure]);
-                        } else {
+                        }
+                        else {
                             countMissing++;
                             console.log("FIPS Code: " + d.id + " not found. Error #" + countMissing);
                             return '#ccc';
                         }
                     });
-
-            }
-
-            // define mouseover and mouseout events
-            function bindHover() {
-                document.body.addEventListener('mousemove', function(e) {
-
-                    if (e.target.nodeName == 'path' && e.target.className.animVal !== 'states') {
-                        let d = d3.select(e.target).data()[0];
-                        let value = countyObj[d.id][measure];
-                        let content = '';
-                        if (value === null) {
-                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'No data';
-                        } else {
-                            value = cols[measure].type == 'percentage' ? value / 100 : value;
-                            content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id]['County Winner'] + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(Math.abs(value));
-                        }
-                        
-                        showDetail(e, content);
-                    }
-                });
-
-                document.body.addEventListener('mouseout', function(e) {
-                    if (e.target.nodeName == 'path') hideDetail();
-                });
+    
             }
 
             // define zoom function
             function zoomed() {
                 group.attr("transform", d3.event.transform);
-                group.select(".nation").style("stroke-width", 0.5 / d3.event.scale + "px");
-                group.select(".states").style("stroke-width", 1 / d3.event.scale + "px");
-                group.select(".counties").style("stroke-width", 0.1 / d3.event.scale + "px");
+                // group.select(".nation").style("stroke-width", 0.5 / d3.event.scale + "px");
+                // group.select(".state-border").style("stroke-width", 0.5 / d3.event.scale + "px");
+                // group.select(".county-border").style("stroke-width", 0.1 / d3.event.scale + "px");
             }
 
             // When clicked, zoom in
@@ -754,34 +732,29 @@
                 .call(zoom);
 
             let group = svg.append("g");
-
-            group.append("path")
-                .datum(topojson.feature(us, us.objects.nation))
-                .attr("class", "nation")
-                .attr("d", path)
-                .style("stroke-width", "0.5px");
-
+            
+            let countyPath = group.selectAll(".counties")
+                .data(topojson.feature(us, us.objects.counties).features)
+                .enter()
+                .append('path')
+                .attr("class", "county-border")
+                .on("click", clicked)
+                .attr("d", path);
+                
             group.append("path")
                 .datum(topojson.mesh(us, us.objects.states, function(a, b) {
                     return a !== b;
                 }))
-                .attr("class", "states")
-                .attr("d", path)
-                .style("stroke-width", "1px");
+                .attr("class", "state-border")
+                .attr("d", path);
 
-            let countyPathEnter = group.selectAll("path")
-                .data(topojson.feature(us, us.objects.counties).features)
-                .enter();
+            group.append("path")
+                .datum(topojson.feature(us, us.objects.nation))
+                .attr("class", "nation-border")
+                .attr("d", path);
 
-            let countyPathUpdate = countyPathEnter
-                .append('path')
-                .attr("class", "counties")
-                .attr("d", path)
-                .style("stroke-width", "0.1px")
-                .on("click", clicked);
-                
-            renderMap();
             renderText();
+            renderMap();
             bindHover();
             setResponsiveSVG();
 
@@ -809,6 +782,31 @@
             textDescription.style("opacity", 0).transition().duration(1000).style("opacity", 1).text(description);
             textFootnote.html('<em>Source: </em><span><a href="' + url + '" target="_blank">' + source + '</span></a>');
 
+        }
+
+        // define mouseover and mouseout events
+        // to ensure mouseover events work on IE
+        function bindHover() {
+            document.body.addEventListener('mousemove', function(e) {
+
+                if (e.target.nodeName == 'path' && e.target.className.animVal !== 'state-border') {
+                    let d = d3.select(e.target).data()[0];
+                    let value = countyObj[d.id][measure];
+                    let content = '';
+                    if (value === null) {
+                        content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'No data';
+                    } else {
+                        value = cols[measure].type == 'percentage' ? measure == 'countywinrate' ? Math.abs(value/100) : (value / 100): value;
+                        content = countyObj[d.id].County + ', ' + countyObj[d.id].State + '<br>' + 'Voted for: ' + countyObj[d.id]['County Winner'] + '<br>' + cols[measure].label + ': ' + d3.format(cols[measure].format)(value);
+                    }
+                    
+                    showDetail(e, content);
+                }
+            });
+
+            document.body.addEventListener('mouseout', function(e) {
+                if (e.target.nodeName == 'path') hideDetail();
+            });
         }
 
         // Show tooltip on hover
@@ -879,15 +877,21 @@
             .await(createMap);
     </script>
     <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-    
-      ga('create', 'UA-102235118-1', 'auto');
-      ga('send', 'pageview');
-    
-    </script>    
+        (function(i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function() {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-102235118-1', 'auto');
+        ga('send', 'pageview');
+    </script>
 </body>
 
 </html>
