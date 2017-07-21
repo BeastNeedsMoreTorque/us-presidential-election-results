@@ -213,6 +213,16 @@
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Primary Care Physicians is the ratio of the population to total primary care physicians. Primary care physicians include non-federal, practicing physicians (M.D.'s and D.O.'s) under age 75 specializing in general practice medicine, family medicine, internal medicine, and pediatrics."
             },
+            "votingagepopulation": {
+                "label": "Voting Age Population",
+                "type": "number",
+                "format": ".2s",
+                "title": "Voting Age Population",
+                "latestyear": "2015",
+                "url": "https://www.census.gov/rdo/data/voting_age_population_by_citizenship_and_race_cvap.html",
+                "source": "U.S. Census Bureau, ACS Demographic and Housing Estimates",
+                "description": "Special tabulation providing data on the citizen voting age population per county."
+            },
             "population": {
                 "label": "Population",
                 "type": "number",
@@ -409,7 +419,7 @@
                 "format": ".1%",
                 "title": "Obesity rate",
                 "latestyear": "2015",
-                "url": "http://www.countyhealthrankings.org/measure/poor-physical-health-days",
+                "url": "http://www.countyhealthrankings.org/measure/adult-obesity",
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Adult Obesity is the percentage of the adult population (age 20 and older) that reports a body mass index (BMI) greater than or equal to 30 kg/m2."
             },
@@ -419,7 +429,7 @@
                 "format": ",.0f",
                 "title": "Food environment index",
                 "latestyear": "2015",
-                "url": "http://www.countyhealthrankings.org/measure/poor-physical-health-days",
+                "url": "http://www.countyhealthrankings.org/measure/food-environment-index",
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "The Food Environment Index ranges from 0 (best) to 10 (worst) and equally weights two indicators of the food environment:\n1) Limited access to healthy foods estimates the percentage of the population that is low income and does not live close to a grocery store. Living close to a grocery store is defined differently in rural and nonrural areas; in rural areas, it means living less than 10 miles from a grocery store whereas in nonrural areas, it means less than 1 mile. Low income is defined as having an annual family income of less than or equal to 200 percent of the federal poverty threshold for the family size.\n2) Food insecurity estimates the percentage of the population who did not have access to a reliable source of food during the past year. A two-stage fixed effects model was created using information from the Community Population Survey, Bureau of Labor Statistics, and American Community Survey."
             },
@@ -429,7 +439,7 @@
                 "format": ",.0f",
                 "title": "Dentist",
                 "latestyear": "2015",
-                "url": "http://www.countyhealthrankings.org/measure/food-environment-index",
+                "url": "http://www.countyhealthrankings.org/measure/dentists",
                 "source": "University of Wisconsin Population Health Institute/Robert Wood Johnson Foundation",
                 "description": "Dentists are measured as the ratio of the county population to total dentists in the county."
             },
@@ -587,6 +597,7 @@
                 d.medianhouseholdincome = +d['Household Income'] || null;
                 d.residentialsegregation = +d['Black/White Segregation index'] || null;
                 d.drugoverdose = +d['Drug Overdose Mortality Rate'] || null;
+                d.votingagepopulation = +d['Voting Age Population'] || null;
                 d.population = +d['Population'] || null;
                 d.averagepollution = +d['Average Daily PM2.5'] || null;
                 d.violentcrime = +d['Violent Crime Rate'] || null;
