@@ -640,7 +640,7 @@
                     return countyObj[d.FIPS][measure];
                 });
 
-                let color = d3.scaleSequential().interpolator(measure == 'countywinrate' ? d3.interpolateRdBu : measure == 'dailysunlight' ? d3.interpolateRdYlBu : measure == 'ratenaturalincrease' ? d3.interpolatePiYG : d3.interpolateOranges);
+                let color = d3.scaleSequential().interpolator(measure == 'countywinrate' ? d3.interpolateRdBu : measure == 'dailysunlight' ? d3.interpolateRdYlBu : measure == 'ratenaturalincrease' ? d3.interpolateYlGn : d3.interpolateOranges);
                 // let color = measure == 'countywinrate' ? d3.scaleSequential().interpolator(d3.interpolateRdBu) : d3.scaleQuantize().range(d3.schemeOranges[9]);
                 color.domain(measure == 'dailysunlight' ? [extent[1], extent[0]] : measure == 'countywinrate' ? [-100, 100] : [extent[0], extent[1]]);
 
