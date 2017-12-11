@@ -1,0 +1,41 @@
+---
+title: "CHR_Data_Exploration"
+author: "Tony McGovern"
+date: "7/30/2017"
+output: html_document
+---
+
+```{r SETUP, include=FALSE}
+knitr::opts_chunk$set(tidy=TRUE, tidy.opts=list(width.cutoff=90), echo = TRUE)
+```
+
+## 3,142 Americas 
+### Exploring U.S. County Health During the 2016 Presidential Election
+
+```{r INSTALL PACKAGES, include=FALSE}
+
+library(tidyverse) # includes dplyr and ggplot
+library(tidycensus) # for programmatic access to ACS
+library(censusapi) # fro programmatic access to Census API
+library(skimr) # to skim useful summary statistics 
+library(car) # for scatterplots correlation matrices
+
+```
+
+
+``` {r READ DATA}
+
+# suppress warnings for the time being
+oldw <- getOption("warn")
+options(warn = -1)
+
+# read raw expanded County Health Rankings data set
+chr <- read_csv(file="https://raw.githubusercontent.com/tonmcg/us-presidential-election-results/master/public/data/chr.csv")
+
+# view warnings again
+options(warn = oldw)
+
+# view chr
+head(chr, n=100)
+
+```
